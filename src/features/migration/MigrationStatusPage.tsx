@@ -9,6 +9,7 @@ import { MigrationStatusChip } from '@/shared/ui/migration-status-chip'
 import { useMigrations, type MigrationFilter } from './api'
 import { formatDate } from '@/shared/lib/format'
 import { routes } from '@/shared/config/routes'
+import { Select } from '@/shared/ui/select'
 import { cn } from '@/shared/lib/utils'
 import type { MigrationStatus, ExternalSystemKey } from '@/shared/types'
 
@@ -104,55 +105,40 @@ export function MigrationStatusPage() {
           </div>
           <div>
             <label className="block text-xs text-text-muted mb-1">Статус</label>
-            <select
+            <Select
               value={status}
-              onChange={(e) => {
-                setStatus(e.target.value as MigrationStatus | '')
+              onChange={(v) => {
+                setStatus(v as MigrationStatus | '')
                 setPage(1)
               }}
-              className="w-full h-10 px-3 rounded-md border border-border-default bg-bg-subtle focus:bg-bg-surface focus:border-accent text-sm"
-            >
-              {STATUS_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
+              options={STATUS_OPTIONS}
+              ariaLabel="Статус миграции"
+            />
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
               <label className="block text-xs text-text-muted mb-1">Источник</label>
-              <select
+              <Select
                 value={source}
-                onChange={(e) => {
-                  setSource(e.target.value as ExternalSystemKey | '')
+                onChange={(v) => {
+                  setSource(v as ExternalSystemKey | '')
                   setPage(1)
                 }}
-                className="w-full h-10 px-2 rounded-md border border-border-default bg-bg-subtle focus:bg-bg-surface focus:border-accent text-sm"
-              >
-                {SYSTEM_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
+                options={SYSTEM_OPTIONS}
+                ariaLabel="Исходная система"
+              />
             </div>
             <div>
               <label className="block text-xs text-text-muted mb-1">Цель</label>
-              <select
+              <Select
                 value={target}
-                onChange={(e) => {
-                  setTarget(e.target.value as ExternalSystemKey | '')
+                onChange={(v) => {
+                  setTarget(v as ExternalSystemKey | '')
                   setPage(1)
                 }}
-                className="w-full h-10 px-2 rounded-md border border-border-default bg-bg-subtle focus:bg-bg-surface focus:border-accent text-sm"
-              >
-                {SYSTEM_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
+                options={SYSTEM_OPTIONS}
+                ariaLabel="Целевая система"
+              />
             </div>
           </div>
         </div>

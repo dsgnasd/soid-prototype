@@ -9,7 +9,17 @@ import { Skeleton } from '@/shared/ui/empty-state'
 import { apiFetch } from '@/shared/api/client'
 import { formatDateTime } from '@/shared/lib/format'
 import { routes } from '@/shared/config/routes'
+import { Select } from '@/shared/ui/select'
 import type { Operation, OperationType } from '@/shared/types'
+
+const TYPE_OPTIONS: { value: '' | OperationType; label: string }[] = [
+  { value: '', label: 'Все типы' },
+  { value: 'create', label: 'Создание' },
+  { value: 'update', label: 'Изменение' },
+  { value: 'delete', label: 'Удаление' },
+  { value: 'authorize', label: 'Авторизация' },
+  { value: 'export', label: 'Экспорт' },
+]
 
 const TYPE_LABEL: Record<OperationType, string> = {
   create: 'Создание',
@@ -68,18 +78,14 @@ export function OperationsPage() {
               className="w-full h-10 pl-9 pr-3 rounded-md border border-border-default bg-bg-subtle focus:bg-bg-surface focus:border-accent text-sm"
             />
           </div>
-          <select
-            value={type}
-            onChange={(e) => setType(e.target.value as '' | OperationType)}
-            className="h-10 px-3 rounded-md border border-border-default bg-bg-subtle text-sm md:w-44"
-          >
-            <option value="">Все типы</option>
-            <option value="create">Создание</option>
-            <option value="update">Изменение</option>
-            <option value="delete">Удаление</option>
-            <option value="authorize">Авторизация</option>
-            <option value="export">Экспорт</option>
-          </select>
+          <div className="md:w-44">
+            <Select
+              value={type}
+              onChange={setType}
+              options={TYPE_OPTIONS}
+              ariaLabel="Тип операции"
+            />
+          </div>
         </div>
 
         {isLoading ? (

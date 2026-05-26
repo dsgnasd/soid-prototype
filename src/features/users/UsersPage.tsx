@@ -9,7 +9,14 @@ import { Skeleton } from '@/shared/ui/empty-state'
 import { apiFetch } from '@/shared/api/client'
 import { formatDate } from '@/shared/lib/format'
 import { routes } from '@/shared/config/routes'
+import { Select } from '@/shared/ui/select'
 import type { OrgUnit, User } from '@/shared/types'
+
+const STATUS_OPTIONS: { value: '' | 'active' | 'blocked'; label: string }[] = [
+  { value: '', label: 'Все статусы' },
+  { value: 'active', label: 'Активные' },
+  { value: 'blocked', label: 'Заблокированные' },
+]
 
 export function UsersPage() {
   const [search, setSearch] = useState('')
@@ -56,15 +63,14 @@ export function UsersPage() {
               className="w-full h-10 pl-9 pr-3 rounded-md border border-border-default bg-bg-subtle focus:bg-bg-surface focus:border-accent text-sm"
             />
           </div>
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value as '' | 'active' | 'blocked')}
-            className="h-10 px-3 rounded-md border border-border-default bg-bg-subtle text-sm md:w-44"
-          >
-            <option value="">Все статусы</option>
-            <option value="active">Активные</option>
-            <option value="blocked">Заблокированные</option>
-          </select>
+          <div className="md:w-44">
+            <Select
+              value={status}
+              onChange={setStatus}
+              options={STATUS_OPTIONS}
+              ariaLabel="Статус пользователя"
+            />
+          </div>
         </div>
 
         {isLoading ? (

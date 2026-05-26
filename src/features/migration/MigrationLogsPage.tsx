@@ -8,6 +8,7 @@ import { Skeleton, EmptyState } from '@/shared/ui/empty-state'
 import { useMigrationLogs, useMigrationDetails } from './api'
 import { formatDateTime } from '@/shared/lib/format'
 import { routes } from '@/shared/config/routes'
+import { Select } from '@/shared/ui/select'
 import { cn } from '@/shared/lib/utils'
 import type { MigrationLogEntry } from '@/shared/types'
 
@@ -83,17 +84,12 @@ export function MigrationLogsPage() {
               className="w-full h-10 pl-9 pr-3 rounded-md border border-border-default bg-bg-subtle focus:bg-bg-surface focus:border-accent text-sm"
             />
           </div>
-          <select
+          <Select
             value={level}
-            onChange={(e) => setLevel(e.target.value as '' | MigrationLogEntry['level'])}
-            className="w-full h-10 px-3 rounded-md border border-border-default bg-bg-subtle focus:bg-bg-surface focus:border-accent text-sm"
-          >
-            {LEVEL_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
+            onChange={(v) => setLevel(v as '' | MigrationLogEntry['level'])}
+            options={LEVEL_OPTIONS}
+            ariaLabel="Уровень лога"
+          />
         </div>
 
         {isLoading ? (
