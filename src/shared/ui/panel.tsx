@@ -14,6 +14,7 @@ interface PanelProps {
  * По DS v4.0 §9.9.
  */
 export function Panel({ title, action, children, className, bodyClassName }: PanelProps) {
+  const hasHeader = Boolean(title || action)
   return (
     <section
       className={cn(
@@ -21,7 +22,7 @@ export function Panel({ title, action, children, className, bodyClassName }: Pan
         className,
       )}
     >
-      {(title || action) && (
+      {hasHeader && (
         <header className="px-5 pt-4 pb-3 flex items-center justify-between gap-3">
           {title && (
             <h2 className="text-base font-semibold tracking-tight text-text-primary">{title}</h2>
@@ -29,7 +30,7 @@ export function Panel({ title, action, children, className, bodyClassName }: Pan
           {action && <div className="shrink-0">{action}</div>}
         </header>
       )}
-      <div className={cn('px-5 pb-5', bodyClassName)}>{children}</div>
+      <div className={cn(hasHeader ? 'px-5 pb-5' : 'p-5', bodyClassName)}>{children}</div>
     </section>
   )
 }
