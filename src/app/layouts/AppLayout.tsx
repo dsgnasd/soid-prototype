@@ -1,5 +1,27 @@
 import { Navigate, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { LogOut, Moon, Sun } from 'lucide-react'
+import {
+  LogOut,
+  Moon,
+  Sun,
+  LayoutDashboard,
+  Inbox,
+  FileCheck,
+  Play,
+  FilePlus,
+  Activity,
+  ScrollText,
+  Users,
+  Shield,
+  KeyRound,
+  Network,
+  FileText,
+  ArrowUpRightFromSquare,
+  Plug,
+  Database,
+  Settings,
+  Info,
+  type LucideIcon,
+} from 'lucide-react'
 import { useAuth, useCurrentRole } from '@/shared/hooks/useAuth'
 import { useTheme } from '@/shared/hooks/useTheme'
 import { routes } from '@/shared/config/routes'
@@ -11,36 +33,37 @@ import type { RoleId } from '@/shared/types'
 interface NavItem {
   to: string
   label: string
+  icon: LucideIcon
   group?: string
   roles?: RoleId[]
 }
 
 const NAV: NavItem[] = [
-  { to: routes.dashboard, label: 'Дашборд' },
+  { to: routes.dashboard, label: 'Дашборд', icon: LayoutDashboard },
 
-  { to: routes.tasks, label: 'Мои задачи', group: 'РАБОТА', roles: ['operator', 'admin'] },
-  { to: routes.myProcesses, label: 'Мои процессы', group: 'РАБОТА', roles: ['operator', 'admin'] },
+  { to: routes.tasks, label: 'Мои задачи', icon: Inbox, group: 'РАБОТА', roles: ['operator', 'admin'] },
+  { to: routes.myProcesses, label: 'Мои процессы', icon: FileCheck, group: 'РАБОТА', roles: ['operator', 'admin'] },
 
-  { to: routes.migrationNew, label: 'Запустить миграцию', group: 'СЕРВИСЫ', roles: ['operator', 'admin'] },
-  { to: routes.approvalNew, label: 'Запустить согласование', group: 'СЕРВИСЫ', roles: ['operator', 'admin'] },
+  { to: routes.migrationNew, label: 'Запустить миграцию', icon: Play, group: 'СЕРВИСЫ', roles: ['operator', 'admin'] },
+  { to: routes.approvalNew, label: 'Запустить согласование', icon: FilePlus, group: 'СЕРВИСЫ', roles: ['operator', 'admin'] },
 
-  { to: routes.migrationStatus, label: 'Статус миграции', group: 'МОНИТОРИНГ' },
-  { to: routes.operations, label: 'История операций', group: 'МОНИТОРИНГ' },
+  { to: routes.migrationStatus, label: 'Статус миграции', icon: Activity, group: 'МОНИТОРИНГ' },
+  { to: routes.operations, label: 'История операций', icon: ScrollText, group: 'МОНИТОРИНГ' },
 
-  { to: routes.adminUsers, label: 'Пользователи', group: 'АДМИНИСТРИРОВАНИЕ', roles: ['admin', 'superadmin'] },
-  { to: routes.adminRoles, label: 'Роли', group: 'АДМИНИСТРИРОВАНИЕ', roles: ['admin', 'superadmin'] },
-  { to: routes.adminAccess, label: 'Управление доступами', group: 'АДМИНИСТРИРОВАНИЕ', roles: ['admin', 'superadmin'] },
-  { to: routes.adminOrgstructure, label: 'Оргструктура', group: 'АДМИНИСТРИРОВАНИЕ', roles: ['admin', 'superadmin'] },
-  { to: routes.adminApprovalTemplates, label: 'Шаблоны согласования', group: 'АДМИНИСТРИРОВАНИЕ', roles: ['admin', 'superadmin'] },
-  { to: routes.adminEscalations, label: 'Заявки эскалации', group: 'АДМИНИСТРИРОВАНИЕ', roles: ['superadmin'] },
+  { to: routes.adminUsers, label: 'Пользователи', icon: Users, group: 'АДМИНИСТРИРОВАНИЕ', roles: ['admin', 'superadmin'] },
+  { to: routes.adminRoles, label: 'Роли', icon: Shield, group: 'АДМИНИСТРИРОВАНИЕ', roles: ['admin', 'superadmin'] },
+  { to: routes.adminAccess, label: 'Управление доступами', icon: KeyRound, group: 'АДМИНИСТРИРОВАНИЕ', roles: ['admin', 'superadmin'] },
+  { to: routes.adminOrgstructure, label: 'Оргструктура', icon: Network, group: 'АДМИНИСТРИРОВАНИЕ', roles: ['admin', 'superadmin'] },
+  { to: routes.adminApprovalTemplates, label: 'Шаблоны согласования', icon: FileText, group: 'АДМИНИСТРИРОВАНИЕ', roles: ['admin', 'superadmin'] },
+  { to: routes.adminEscalations, label: 'Заявки эскалации', icon: ArrowUpRightFromSquare, group: 'АДМИНИСТРИРОВАНИЕ', roles: ['superadmin'] },
 
-  { to: routes.platformIntegrations, label: 'Интеграции', group: 'ПЛАТФОРМА', roles: ['superadmin'] },
-  { to: routes.platformMigrationConfig, label: 'Конфигурация миграций', group: 'ПЛАТФОРМА', roles: ['superadmin'] },
-  { to: routes.platformSettings, label: 'Системные настройки', group: 'ПЛАТФОРМА', roles: ['superadmin'] },
-  { to: routes.platformHealth, label: 'System health', group: 'ПЛАТФОРМА', roles: ['superadmin'] },
+  { to: routes.platformIntegrations, label: 'Интеграции', icon: Plug, group: 'ПЛАТФОРМА', roles: ['superadmin'] },
+  { to: routes.platformMigrationConfig, label: 'Конфигурация миграций', icon: Database, group: 'ПЛАТФОРМА', roles: ['superadmin'] },
+  { to: routes.platformSettings, label: 'Системные настройки', icon: Settings, group: 'ПЛАТФОРМА', roles: ['superadmin'] },
+  { to: routes.platformHealth, label: 'System health', icon: Activity, group: 'ПЛАТФОРМА', roles: ['superadmin'] },
 
-  { to: routes.orgstructure, label: 'Оргструктура (просмотр)', group: 'СПРАВОЧНИКИ' },
-  { to: routes.about, label: 'О программе', group: 'СПРАВОЧНИКИ' },
+  { to: routes.orgstructure, label: 'Оргструктура (просмотр)', icon: Network, group: 'СПРАВОЧНИКИ' },
+  { to: routes.about, label: 'О программе', icon: Info, group: 'СПРАВОЧНИКИ' },
 ]
 
 export function AppLayout() {
@@ -89,24 +112,41 @@ export function AppLayout() {
                 </div>
               )}
               <ul className="space-y-0.5">
-                {items.map((item) => (
-                  <li key={item.to}>
-                    <NavLink
-                      to={item.to}
-                      end={item.to === routes.dashboard}
-                      className={({ isActive }) =>
-                        cn(
-                          'flex items-center h-[42px] px-3 rounded-md text-sm transition-colors',
-                          isActive
-                            ? 'bg-accent-subtle text-accent-text font-medium'
-                            : 'text-text-secondary hover:bg-bg-hover hover:text-text-primary',
-                        )
-                      }
-                    >
-                      {item.label}
-                    </NavLink>
-                  </li>
-                ))}
+                {items.map((item) => {
+                  const Icon = item.icon
+                  return (
+                    <li key={item.to}>
+                      <NavLink
+                        to={item.to}
+                        end={item.to === routes.dashboard}
+                        className={({ isActive }) =>
+                          cn(
+                            'group flex items-center gap-3 h-[42px] px-3 rounded-md text-sm transition-colors',
+                            isActive
+                              ? 'bg-accent-subtle text-accent-text font-medium'
+                              : 'text-text-secondary hover:bg-bg-hover hover:text-text-primary',
+                          )
+                        }
+                      >
+                        {({ isActive }) => (
+                          <>
+                            <Icon
+                              size={18}
+                              className={cn(
+                                'shrink-0 transition-colors',
+                                isActive
+                                  ? 'text-accent'
+                                  : 'text-text-muted group-hover:text-text-secondary',
+                              )}
+                              strokeWidth={1.75}
+                            />
+                            <span className="truncate">{item.label}</span>
+                          </>
+                        )}
+                      </NavLink>
+                    </li>
+                  )
+                })}
               </ul>
             </div>
           ))}
