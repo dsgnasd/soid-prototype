@@ -45,7 +45,7 @@ export function PlatformMigrationConfigPage() {
         }
       />
 
-      <Panel bodyClassName="px-0 pb-0">
+      <Panel bodyClassName="p-0">
         {isLoading ? (
           <div className="p-5 space-y-2">
             {[0, 1, 2].map((i) => (

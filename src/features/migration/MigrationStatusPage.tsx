@@ -209,7 +209,7 @@ export function MigrationStatusPage() {
             />
           </Panel>
         ) : (
-          <Panel bodyClassName="px-0 pb-0">
+          <Panel bodyClassName="p-0">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
