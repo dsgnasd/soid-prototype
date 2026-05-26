@@ -1,0 +1,36 @@
+[
+  {
+    "id": "u-operator",
+    "fullName": "Иванов Иван Иванович",
+    "email": "operator@soid.demo",
+    "phone": "+7 (495) 000-00-01",
+    "orgUnitId": "ou-mkc",
+    "roles": ["operator"],
+    "status": "active",
+    "passwordExpiresAt": "2026-08-25T00:00:00Z",
+    "lastLoginAt": "2026-05-24T18:42:00Z"
+  },
+  {
+    "id": "u-admin",
+    "fullName": "Петров Пётр Петрович",
+    "email": "admin@soid.demo",
+    "phone": "+7 (495) 000-00-02",
+    "orgUnitId": "ou-implementation",
+    "roles": ["admin", "operator"],
+    "scopeOrgUnitId": "ou-implementation",
+    "status": "active",
+    "passwordExpiresAt": "2026-07-10T00:00:00Z",
+    "lastLoginAt": "2026-05-25T09:12:00Z"
+  },
+  {
+    "id": "u-superadmin",
+    "fullName": "Кузнецова Ольга Александровна",
+    "email": "superadmin@soid.demo",
+    "phone": "+7 (495) 000-00-03",
+    "orgUnitId": "ou-it",
+    "roles": ["superadmin"],
+    "status": "active",
+    "passwordExpiresAt": "2026-09-01T00:00:00Z",
+    "lastLoginAt": "2026-05-25T08:30:00Z"
+  }
+]

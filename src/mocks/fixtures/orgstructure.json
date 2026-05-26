@@ -1,0 +1,10 @@
+[
+  { "id": "ou-zavod", "name": "Завод", "parentId": null, "description": "Основная производственная единица" },
+  { "id": "ou-implementation", "name": "Отдел внедрения", "parentId": "ou-zavod", "description": "Внедрение и сопровождение ИТ-систем" },
+  { "id": "ou-mkc", "name": "МКЦ (маркетинг центр)", "parentId": "ou-implementation", "description": "Маркетинг-центр" },
+  { "id": "ou-it", "name": "ИТ-инфраструктура", "parentId": "ou-implementation", "description": "Серверы, сеть, безопасность" },
+  { "id": "ou-construction", "name": "Конструкторский отдел", "parentId": "ou-zavod", "description": "КД и инженерные расчёты" },
+  { "id": "ou-tech", "name": "Технологический отдел", "parentId": "ou-zavod", "description": "Технологическая подготовка производства" },
+  { "id": "ou-production", "name": "Производство", "parentId": "ou-zavod", "description": "Цеха основного производства" },
+  { "id": "ou-finance", "name": "Финансовая служба", "parentId": "ou-zavod", "description": "Бухгалтерия и финансы" }
+]

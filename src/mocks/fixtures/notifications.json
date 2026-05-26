@@ -1,0 +1,76 @@
+[
+  {
+    "id": "n-001",
+    "type": "task_overdue",
+    "severity": "critical",
+    "title": "Просроченная задача согласования",
+    "message": "ТТ-1024 «Согласование втулки V01» — срок истёк вчера",
+    "link": "/tasks/t-1024",
+    "createdAt": "2026-05-25T08:15:00Z"
+  },
+  {
+    "id": "n-002",
+    "type": "task_assigned",
+    "severity": "info",
+    "title": "Новая задача согласования",
+    "message": "ТТ-1031 «Согласование чертежа корпуса» — срок до 28.05",
+    "link": "/tasks/t-1031",
+    "createdAt": "2026-05-25T07:42:00Z"
+  },
+  {
+    "id": "n-003",
+    "type": "migration_failed",
+    "severity": "critical",
+    "title": "Ошибка миграции",
+    "message": "Пакет IPS→TC #4521 завершился с ошибкой. 12 объектов из 47 не перенесены",
+    "link": "/migration/status/m-4521",
+    "createdAt": "2026-05-24T19:10:00Z"
+  },
+  {
+    "id": "n-004",
+    "type": "process_status_changed",
+    "severity": "info",
+    "title": "Процесс согласован",
+    "message": "«Согласование чертежа КД-2298» завершён успешно",
+    "link": "/processes/p-2298",
+    "createdAt": "2026-05-24T15:20:00Z",
+    "readAt": "2026-05-24T16:00:00Z"
+  },
+  {
+    "id": "n-005",
+    "type": "migration_completed",
+    "severity": "info",
+    "title": "Миграция завершена",
+    "message": "Пакет IPS→TC #4520 — успешно перенесено 124 объекта",
+    "link": "/migration/status/m-4520",
+    "createdAt": "2026-05-24T12:05:00Z",
+    "readAt": "2026-05-24T12:30:00Z"
+  },
+  {
+    "id": "n-006",
+    "type": "integration_down",
+    "severity": "critical",
+    "title": "Teamcenter недоступен",
+    "message": "Подключение к Teamcenter потеряно с 09:42. Активных миграций: 47",
+    "link": "/platform/integrations",
+    "createdAt": "2026-05-25T09:43:00Z"
+  },
+  {
+    "id": "n-007",
+    "type": "security_anomaly",
+    "severity": "warning",
+    "title": "Подозрительная активность",
+    "message": "Зафиксировано 28 неудачных входов за последний час",
+    "link": "/operations",
+    "createdAt": "2026-05-25T10:12:00Z"
+  },
+  {
+    "id": "n-008",
+    "type": "escalation_received",
+    "severity": "info",
+    "title": "Заявка эскалации",
+    "message": "От Петрова П.П.: расширение прав для Сидорова С.С.",
+    "link": "/admin/escalations",
+    "createdAt": "2026-05-25T07:00:00Z"
+  }
+]

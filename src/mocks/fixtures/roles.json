@@ -1,0 +1,75 @@
+[
+  {
+    "id": "role-operator",
+    "name": "Оператор",
+    "description": "Запуск миграций, инициация и выполнение задач согласования",
+    "system": true,
+    "permissions": [
+      { "module": "migration", "actions": ["view", "create"] },
+      { "module": "approvals", "actions": ["view", "create"] },
+      { "module": "orgstructure", "actions": ["view"] }
+    ]
+  },
+  {
+    "id": "role-admin",
+    "name": "Администратор подразделения",
+    "description": "Управление пользователями, ролями и шаблонами в своём подразделении",
+    "system": true,
+    "permissions": [
+      { "module": "migration", "actions": ["view", "create"] },
+      { "module": "approvals", "actions": ["view", "create"] },
+      { "module": "users", "actions": ["view", "create", "edit", "delete"] },
+      { "module": "roles", "actions": ["view", "create", "edit", "delete"] },
+      { "module": "orgstructure", "actions": ["view", "create", "edit", "delete"] },
+      { "module": "templates", "actions": ["view", "create", "edit"] },
+      { "module": "operations", "actions": ["view"] }
+    ]
+  },
+  {
+    "id": "role-superadmin",
+    "name": "Суперадминистратор",
+    "description": "Технический владелец платформы. Без scope подразделения",
+    "system": true,
+    "permissions": [
+      { "module": "platform", "actions": ["view", "create", "edit", "delete"] },
+      { "module": "users", "actions": ["view", "create", "edit", "delete"] },
+      { "module": "roles", "actions": ["view", "create", "edit", "delete"] },
+      { "module": "operations", "actions": ["view"] }
+    ]
+  },
+  {
+    "id": "role-manager",
+    "name": "Менеджер подразделения",
+    "description": "Просмотр отчётов и статистики по своему scope",
+    "permissions": [
+      { "module": "migration", "actions": ["view"] },
+      { "module": "approvals", "actions": ["view"] },
+      { "module": "users", "actions": ["view"] }
+    ]
+  },
+  {
+    "id": "role-observer",
+    "name": "Наблюдатель",
+    "description": "Только просмотр",
+    "permissions": [
+      { "module": "migration", "actions": ["view"] },
+      { "module": "approvals", "actions": ["view"] }
+    ]
+  },
+  {
+    "id": "role-tech",
+    "name": "Технолог",
+    "description": "Утверждение технологических процессов",
+    "permissions": [
+      { "module": "approvals", "actions": ["view", "create"] }
+    ]
+  },
+  {
+    "id": "role-constr",
+    "name": "Конструктор",
+    "description": "Утверждение конструкторской документации",
+    "permissions": [
+      { "module": "approvals", "actions": ["view", "create"] }
+    ]
+  }
+]

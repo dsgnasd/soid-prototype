@@ -1,0 +1,33 @@
+[
+  {
+    "id": "esc-1",
+    "authorId": "u-admin",
+    "type": "temporary_permission",
+    "description": "Прошу временно расширить права пользователю Сидорову С.С. для доступа к подразделению «Производство» в рамках проекта ABC. Срок: до 31.05.2026.",
+    "objectRef": "u-sidorov",
+    "urgency": "high",
+    "status": "new",
+    "createdAt": "2026-05-25T07:00:00Z"
+  },
+  {
+    "id": "esc-2",
+    "authorId": "u-admin",
+    "type": "cross_scope_action",
+    "description": "Необходимо изменить подразделение пользователю из чужого scope (Конструкторский отдел → МКЦ) в связи с переводом.",
+    "objectRef": "u-volkova",
+    "urgency": "medium",
+    "status": "in_review",
+    "createdAt": "2026-05-24T15:30:00Z"
+  },
+  {
+    "id": "esc-3",
+    "authorId": "u-chief",
+    "type": "license_increase",
+    "description": "Запрос на увеличение лимита активных пользователей: текущий 100, нужно 120.",
+    "urgency": "low",
+    "status": "approved",
+    "createdAt": "2026-05-22T11:00:00Z",
+    "resolvedAt": "2026-05-23T09:00:00Z",
+    "resolverId": "u-superadmin"
+  }
+]

@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================================
+   WorkForce Design System v4.0 — токены
+   Адаптация под СОИД: акцент заменён с зелёного на синий enterprise.
+   Остальное (нейтральные, семантические, типографика, радиусы, тени) — из DS.
+   ============================================================================ */
+
+@layer base {
+  :root {
+    /* Backgrounds */
+    --bg-app: #f5f6f7;
+    --bg-surface: #ffffff;
+    --bg-subtle: #f9fafb;
+    --bg-hover: #f3f4f6;
+    --bg-disabled: #f3f4f6;
+
+    /* Text */
+    --text-primary: #111827;      /* 17.74:1 на #FFF — AAA */
+    --text-secondary: #4b5563;    /* 7.56:1 — AAA */
+    --text-muted: #667085;        /* 4.97:1 — AA */
+    --text-disabled: #9ca3af;
+    --text-inverse: #ffffff;
+
+    /* Borders */
+    --border-subtle: #eef0f2;
+    --border-default: #e5e7eb;
+    --border-strong: #d1d5db;
+
+    /* Accent — синий enterprise (заменён с зелёного DS) */
+    --accent: #2563eb;            /* 4.55:1 на #FFF — AA */
+    --accent-hover: #1d4ed8;
+    --accent-pressed: #1e40af;
+    --accent-subtle: #eff6ff;
+    --accent-muted: #dbeafe;
+    --accent-border: #bfdbfe;
+    --accent-text: #1e40af;       /* 8.59:1 на --accent-subtle — AAA */
+
+    /* Semantic — из DS без изменений */
+    --success: #15803d;
+    --success-bg: #dcfce7;
+    --success-text: #166534;
+    --warning: #d97706;
+    --warning-bg: #fef3c7;
+    --warning-text: #92400e;
+    --error: #dc2626;
+    --error-bg: #fee2e2;
+    --error-text: #991b1b;
+    --info: #2563eb;
+    --info-bg: #dbeafe;
+    --info-text: #1e40af;
+
+    /* Focus ring под синий акцент */
+    --sh-focus: 0 0 0 3px rgba(37, 99, 235, 0.18);
+
+    /* shadcn совместимость (HSL формат не используем — переопределяем через значения выше) */
+    --radius: 12px;
+  }
+
+  .dark {
+    /* Backgrounds (DS §3.3) */
+    --bg-app: #0f1115;
+    --bg-surface: #171a20;
+    --bg-subtle: #1c1f26;
+    --bg-hover: #22262e;
+    --bg-disabled: #22262e;
+
+    /* Text */
+    --text-primary: #f3f4f6;      /* 15.84:1 — AAA */
+    --text-secondary: #c4c9d2;
+    --text-muted: #8f95a0;        /* 5.79:1 — AA */
+    --text-disabled: #4b5057;
+    --text-inverse: #0f1115;
+
+    /* Borders */
+    --border-subtle: #22262e;
+    --border-default: #2a2f38;
+    --border-strong: #3a404b;
+
+    /* Accent — синий, светлее на тёмном (DS принцип) */
+    --accent: #3b82f6;            /* 5.69:1 на bg-surface — AA */
+    --accent-hover: #60a5fa;
+    --accent-pressed: #2563eb;
+    --accent-subtle: rgba(59, 130, 246, 0.10);
+    --accent-muted: rgba(59, 130, 246, 0.18);
+    --accent-border: rgba(59, 130, 246, 0.30);
+    --accent-text: #93c5fd;
+
+    /* Semantic */
+    --success: #22c55e;
+    --success-bg: rgba(34, 197, 94, 0.16);
+    --success-text: #86efac;
+    --warning: #f59e0b;
+    --warning-bg: rgba(245, 158, 11, 0.16);
+    --warning-text: #fcd34d;
+    --error: #ef4444;
+    --error-bg: rgba(239, 68, 68, 0.16);
+    --error-text: #fca5a5;
+    --info: #3b82f6;
+    --info-bg: rgba(59, 130, 246, 0.16);
+    --info-text: #93c5fd;
+
+    --sh-focus: 0 0 0 3px rgba(59, 130, 246, 0.28);
+  }
+
+  * {
+    border-color: var(--border-default);
+  }
+
+  html {
+    color-scheme: light dark;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg-app);
+    color: var(--text-primary);
+    font-family: 'Inter Tight', system-ui, -apple-system, sans-serif;
+    font-feature-settings: 'tnum';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  :focus-visible {
+    outline: none;
+    box-shadow: var(--sh-focus);
+    border-radius: 4px;
+  }
+
+  /* Reduced motion (DS §7) */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Тонкая стилизация скроллбара под токены */
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+}

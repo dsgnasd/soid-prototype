@@ -1,0 +1,44 @@
+[
+  {
+    "id": "int-ips",
+    "key": "ips",
+    "type": "ips",
+    "name": "IPS (ИНТЕРМЕХ)",
+    "endpoint": "https://ips.internal/api",
+    "timeoutMs": 30000,
+    "enabled": true,
+    "status": "online",
+    "lastCheckAt": "2026-05-25T10:14:00Z",
+    "responseTimeMs": 142,
+    "activeMigrations": 1,
+    "errorsLast24h": 0
+  },
+  {
+    "id": "int-tc",
+    "key": "teamcenter",
+    "type": "teamcenter",
+    "name": "Siemens Teamcenter",
+    "endpoint": "https://tc.internal/tc/JsonRest",
+    "timeoutMs": 60000,
+    "enabled": true,
+    "status": "offline",
+    "lastCheckAt": "2026-05-25T10:14:00Z",
+    "responseTimeMs": 0,
+    "activeMigrations": 47,
+    "errorsLast24h": 28
+  },
+  {
+    "id": "int-1c",
+    "key": "1c",
+    "type": "1c",
+    "name": "1С:Предприятие",
+    "endpoint": "https://1c.internal/erp/hs/api",
+    "timeoutMs": 30000,
+    "enabled": true,
+    "status": "online",
+    "lastCheckAt": "2026-05-25T10:14:00Z",
+    "responseTimeMs": 89,
+    "activeMigrations": 0,
+    "errorsLast24h": 0
+  }
+]

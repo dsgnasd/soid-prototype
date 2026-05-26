@@ -1,0 +1,15 @@
+[
+  { "id": "l-1", "timestamp": "2026-05-24T18:42:01Z", "level": "info", "message": "Запуск миграции пакета IPS→TC #4521", "objectDesignation": "" },
+  { "id": "l-2", "timestamp": "2026-05-24T18:42:05Z", "level": "info", "message": "Установлено подключение к IPS, версия 2.4.1" },
+  { "id": "l-3", "timestamp": "2026-05-24T18:42:08Z", "level": "info", "message": "Установлено подключение к Teamcenter, версия 14.2" },
+  { "id": "l-4", "timestamp": "2026-05-24T18:42:12Z", "level": "info", "message": "Сформирован план миграции: 47 объектов" },
+  { "id": "l-5", "timestamp": "2026-05-24T18:43:00Z", "level": "info", "message": "Перенос объекта успешен", "objectDesignation": "ТТ-1024-01" },
+  { "id": "l-6", "timestamp": "2026-05-24T18:43:05Z", "level": "info", "message": "Перенос объекта успешен", "objectDesignation": "ТТ-1024-02" },
+  { "id": "l-7", "timestamp": "2026-05-24T18:50:12Z", "level": "warn", "message": "Атрибут 'Дополнительная характеристика' игнорирован (нет маппинга)", "objectDesignation": "ТТ-1024-10" },
+  { "id": "l-8", "timestamp": "2026-05-24T18:55:00Z", "level": "error", "message": "TC-CONFLICT: Объект с таким Item ID уже существует в Teamcenter", "objectDesignation": "ТТ-1024-13" },
+  { "id": "l-9", "timestamp": "2026-05-24T18:58:00Z", "level": "error", "message": "ATTR-MISSING: Не задан обязательный атрибут «Материал»", "objectDesignation": "ТТ-1024-21" },
+  { "id": "l-10", "timestamp": "2026-05-24T19:01:00Z", "level": "error", "message": "TC-CONFLICT: Объект с таким Item ID уже существует в Teamcenter", "objectDesignation": "ТТ-1024-22" },
+  { "id": "l-11", "timestamp": "2026-05-24T19:05:00Z", "level": "warn", "message": "Производительность снижена: ответы Teamcenter > 5 с" },
+  { "id": "l-12", "timestamp": "2026-05-24T19:09:30Z", "level": "info", "message": "Перенесено 35 из 47 объектов" },
+  { "id": "l-13", "timestamp": "2026-05-24T19:10:00Z", "level": "error", "message": "Миграция завершена с ошибками. Успешно: 35, ошибок: 12" }
+]

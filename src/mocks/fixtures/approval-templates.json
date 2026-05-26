@@ -1,0 +1,58 @@
+[
+  {
+    "id": "tpl-cd",
+    "name": "Согласование чертежа КД",
+    "description": "Стандартный процесс согласования конструкторской документации в 3 этапа: Конструктор → Технолог → Главный инженер",
+    "status": "published",
+    "version": 2,
+    "stages": [
+      { "id": "s1", "order": 1, "name": "Конструктор", "participantRole": "constructor", "autoAssign": true },
+      { "id": "s2", "order": 2, "name": "Технолог", "participantRole": "technologist", "autoAssign": false },
+      { "id": "s3", "order": 3, "name": "Главный инженер", "participantRole": "chief", "autoAssign": true }
+    ]
+  },
+  {
+    "id": "tpl-tp",
+    "name": "Согласование технологического процесса",
+    "description": "Согласование ТП: Технолог → Производство → Контроль качества",
+    "status": "published",
+    "version": 1,
+    "stages": [
+      { "id": "s1", "order": 1, "name": "Технолог", "participantRole": "technologist", "autoAssign": true },
+      { "id": "s2", "order": 2, "name": "Производство", "participantRole": "production", "autoAssign": false },
+      { "id": "s3", "order": 3, "name": "Контроль качества", "participantRole": "qc", "autoAssign": true }
+    ]
+  },
+  {
+    "id": "tpl-change",
+    "name": "Согласование изменения изделия",
+    "description": "Извещение об изменении: Инициатор → Конструктор → Технолог → Утверждение",
+    "status": "published",
+    "version": 3,
+    "stages": [
+      { "id": "s1", "order": 1, "name": "Конструктор", "participantRole": "constructor", "autoAssign": false },
+      { "id": "s2", "order": 2, "name": "Технолог", "participantRole": "technologist", "autoAssign": false },
+      { "id": "s3", "order": 3, "name": "Утверждение", "participantRole": "chief", "autoAssign": true }
+    ]
+  },
+  {
+    "id": "tpl-doc",
+    "name": "Согласование документа",
+    "description": "Универсальный шаблон для прочих документов",
+    "status": "published",
+    "version": 1,
+    "stages": [
+      { "id": "s1", "order": 1, "name": "Согласующий", "autoAssign": false }
+    ]
+  },
+  {
+    "id": "tpl-approval",
+    "name": "Утверждение",
+    "description": "Финальное утверждение документа руководителем",
+    "status": "draft",
+    "version": 1,
+    "stages": [
+      { "id": "s1", "order": 1, "name": "Руководитель", "participantRole": "chief", "autoAssign": true }
+    ]
+  }
+]

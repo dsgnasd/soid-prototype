@@ -1,0 +1,62 @@
+[
+  {
+    "id": "t-1024",
+    "processId": "p-2310",
+    "processName": "Согласование ТП-1024 (Втулка V01)",
+    "templateName": "Согласование технологического процесса",
+    "stageOrder": 2,
+    "stageName": "Производство",
+    "initiatorId": "u-operator",
+    "assigneeId": "u-operator",
+    "status": "pending",
+    "createdAt": "2026-05-22T16:30:00Z",
+    "deadline": "2026-05-24T00:00:00Z",
+    "documentCount": 2,
+    "commentCount": 1
+  },
+  {
+    "id": "t-1031",
+    "processId": "p-2320",
+    "processName": "Согласование чертежа корпуса (ТТ-1031)",
+    "templateName": "Согласование чертежа КД",
+    "stageOrder": 1,
+    "stageName": "Конструктор",
+    "initiatorId": "u-admin",
+    "assigneeId": "u-operator",
+    "status": "pending",
+    "createdAt": "2026-05-24T17:00:00Z",
+    "deadline": "2026-05-28T00:00:00Z",
+    "documentCount": 1,
+    "commentCount": 0
+  },
+  {
+    "id": "t-1035",
+    "processId": "p-2325",
+    "processName": "Согласование документа СП-2325",
+    "templateName": "Согласование документа",
+    "stageOrder": 1,
+    "stageName": "Согласующий",
+    "initiatorId": "u-admin",
+    "assigneeId": "u-operator",
+    "status": "pending",
+    "createdAt": "2026-05-25T09:30:00Z",
+    "deadline": "2026-06-01T00:00:00Z",
+    "documentCount": 1,
+    "commentCount": 0
+  },
+  {
+    "id": "t-1015",
+    "processId": "p-2280",
+    "processName": "Утверждение спецификации СП-2280",
+    "templateName": "Согласование документа",
+    "stageOrder": 1,
+    "stageName": "Согласующий",
+    "initiatorId": "u-operator",
+    "assigneeId": "u-chief",
+    "status": "approved",
+    "createdAt": "2026-05-15T11:00:00Z",
+    "decidedAt": "2026-05-15T16:45:00Z",
+    "documentCount": 0,
+    "commentCount": 0
+  }
+]

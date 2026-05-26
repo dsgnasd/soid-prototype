@@ -1,0 +1,12 @@
+[
+  { "id": "u-operator", "fullName": "Иванов Иван Иванович", "email": "operator@soid.demo", "phone": "+7 (495) 000-00-01", "orgUnitId": "ou-mkc", "roles": ["operator"], "status": "active", "passwordExpiresAt": "2026-08-25T00:00:00Z" },
+  { "id": "u-admin", "fullName": "Петров Пётр Петрович", "email": "admin@soid.demo", "phone": "+7 (495) 000-00-02", "orgUnitId": "ou-implementation", "roles": ["admin", "operator"], "scopeOrgUnitId": "ou-implementation", "status": "active", "passwordExpiresAt": "2026-07-10T00:00:00Z" },
+  { "id": "u-superadmin", "fullName": "Кузнецова Ольга Александровна", "email": "superadmin@soid.demo", "phone": "+7 (495) 000-00-03", "orgUnitId": "ou-it", "roles": ["superadmin"], "status": "active", "passwordExpiresAt": "2026-09-01T00:00:00Z" },
+  { "id": "u-sidorov", "fullName": "Сидоров Сергей Сергеевич", "email": "sidorov@soid.demo", "phone": "+7 (495) 000-00-04", "orgUnitId": "ou-mkc", "roles": ["operator"], "status": "blocked", "passwordExpiresAt": "2026-05-30T00:00:00Z" },
+  { "id": "u-constructor", "fullName": "Соколова Мария Сергеевна", "email": "sokolova@soid.demo", "phone": "+7 (495) 000-00-05", "orgUnitId": "ou-construction", "roles": ["operator"], "status": "active", "passwordExpiresAt": "2026-05-29T00:00:00Z" },
+  { "id": "u-technologist", "fullName": "Кузнецов Алексей Андреевич", "email": "kuznetsov@soid.demo", "phone": "+7 (495) 000-00-06", "orgUnitId": "ou-tech", "roles": ["operator"], "status": "active", "passwordExpiresAt": "2026-06-01T00:00:00Z" },
+  { "id": "u-chief", "fullName": "Морозов Виктор Петрович", "email": "morozov@soid.demo", "phone": "+7 (495) 000-00-07", "orgUnitId": "ou-construction", "roles": ["operator", "admin"], "scopeOrgUnitId": "ou-construction", "status": "active", "passwordExpiresAt": "2026-08-10T00:00:00Z" },
+  { "id": "u-volkova", "fullName": "Волкова Татьяна Игоревна", "email": "volkova@soid.demo", "phone": "+7 (495) 000-00-08", "orgUnitId": "ou-tech", "roles": ["operator"], "status": "active", "passwordExpiresAt": "2026-07-22T00:00:00Z" },
+  { "id": "u-egorov", "fullName": "Егоров Дмитрий Николаевич", "email": "egorov@soid.demo", "phone": "+7 (495) 000-00-09", "orgUnitId": "ou-production", "roles": ["operator"], "status": "active", "passwordExpiresAt": "2026-06-15T00:00:00Z" },
+  { "id": "u-pavlova", "fullName": "Павлова Наталья Викторовна", "email": "pavlova@soid.demo", "phone": "+7 (495) 000-00-10", "orgUnitId": "ou-finance", "roles": ["operator"], "status": "active", "passwordExpiresAt": "2026-07-05T00:00:00Z" }
+]

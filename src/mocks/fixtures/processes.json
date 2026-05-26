@@ -1,0 +1,108 @@
+[
+  {
+    "id": "p-2298",
+    "name": "Согласование чертежа КД-2298",
+    "templateId": "tpl-cd",
+    "templateName": "Согласование чертежа КД",
+    "initiatorId": "u-operator",
+    "status": "approved",
+    "currentStageOrder": 3,
+    "startedAt": "2026-05-20T10:00:00Z",
+    "finishedAt": "2026-05-24T15:20:00Z",
+    "documents": [
+      { "id": "d1", "fileName": "КД-2298.pdf", "sizeKb": 2300, "mimeType": "application/pdf", "uploadedAt": "2026-05-20T10:00:00Z", "uploadedById": "u-operator" }
+    ],
+    "history": [
+      { "id": "h1", "timestamp": "2026-05-20T10:00:00Z", "actorId": "u-operator", "action": "started" },
+      { "id": "h2", "timestamp": "2026-05-21T11:30:00Z", "actorId": "u-constructor", "action": "approved", "stageOrder": 1 },
+      { "id": "h3", "timestamp": "2026-05-23T14:00:00Z", "actorId": "u-technologist", "action": "approved", "stageOrder": 2, "comment": "Согласовано" },
+      { "id": "h4", "timestamp": "2026-05-24T15:20:00Z", "actorId": "u-chief", "action": "approved", "stageOrder": 3 }
+    ],
+    "participants": [
+      { "userId": "u-constructor", "stageOrder": 1, "status": "approved", "decidedAt": "2026-05-21T11:30:00Z" },
+      { "userId": "u-technologist", "stageOrder": 2, "status": "approved", "decidedAt": "2026-05-23T14:00:00Z" },
+      { "userId": "u-chief", "stageOrder": 3, "status": "approved", "decidedAt": "2026-05-24T15:20:00Z" }
+    ]
+  },
+  {
+    "id": "p-2310",
+    "name": "Согласование ТП-1024 (Втулка V01)",
+    "templateId": "tpl-tp",
+    "templateName": "Согласование технологического процесса",
+    "initiatorId": "u-operator",
+    "status": "in_progress",
+    "currentStageOrder": 2,
+    "startedAt": "2026-05-22T09:00:00Z",
+    "deadline": "2026-05-25T00:00:00Z",
+    "documents": [
+      { "id": "d1", "fileName": "ТП-1024.pdf", "sizeKb": 1850, "mimeType": "application/pdf", "uploadedAt": "2026-05-22T09:00:00Z", "uploadedById": "u-operator" },
+      { "id": "d2", "fileName": "ТТ-1024.dwg", "sizeKb": 4200, "mimeType": "application/acad", "uploadedAt": "2026-05-22T09:00:00Z", "uploadedById": "u-operator" }
+    ],
+    "history": [
+      { "id": "h1", "timestamp": "2026-05-22T09:00:00Z", "actorId": "u-operator", "action": "started" },
+      { "id": "h2", "timestamp": "2026-05-22T16:30:00Z", "actorId": "u-technologist", "action": "approved", "stageOrder": 1, "comment": "ОК" }
+    ],
+    "participants": [
+      { "userId": "u-technologist", "stageOrder": 1, "status": "approved", "decidedAt": "2026-05-22T16:30:00Z" },
+      { "userId": "u-operator", "stageOrder": 2, "status": "pending" }
+    ]
+  },
+  {
+    "id": "p-2315",
+    "name": "Извещение об изменении ИИ-2315",
+    "templateId": "tpl-change",
+    "templateName": "Согласование изменения изделия",
+    "initiatorId": "u-operator",
+    "status": "rejected",
+    "currentStageOrder": 1,
+    "startedAt": "2026-05-21T12:00:00Z",
+    "finishedAt": "2026-05-21T18:00:00Z",
+    "documents": [],
+    "history": [
+      { "id": "h1", "timestamp": "2026-05-21T12:00:00Z", "actorId": "u-operator", "action": "started" },
+      { "id": "h2", "timestamp": "2026-05-21T18:00:00Z", "actorId": "u-constructor", "action": "rejected", "stageOrder": 1, "comment": "Не указано влияние на смежные узлы. Прошу дополнить раздел 3.2 и переоформить." }
+    ],
+    "participants": [
+      { "userId": "u-constructor", "stageOrder": 1, "status": "rejected", "decidedAt": "2026-05-21T18:00:00Z" }
+    ]
+  },
+  {
+    "id": "p-2320",
+    "name": "Согласование чертежа корпуса (ТТ-1031)",
+    "templateId": "tpl-cd",
+    "templateName": "Согласование чертежа КД",
+    "initiatorId": "u-admin",
+    "status": "in_progress",
+    "currentStageOrder": 1,
+    "startedAt": "2026-05-24T17:00:00Z",
+    "deadline": "2026-05-28T00:00:00Z",
+    "documents": [
+      { "id": "d1", "fileName": "ТТ-1031.pdf", "sizeKb": 3100, "mimeType": "application/pdf", "uploadedAt": "2026-05-24T17:00:00Z", "uploadedById": "u-admin" }
+    ],
+    "history": [
+      { "id": "h1", "timestamp": "2026-05-24T17:00:00Z", "actorId": "u-admin", "action": "started" }
+    ],
+    "participants": [
+      { "userId": "u-operator", "stageOrder": 1, "status": "pending" }
+    ]
+  },
+  {
+    "id": "p-2280",
+    "name": "Утверждение спецификации СП-2280",
+    "templateId": "tpl-doc",
+    "templateName": "Согласование документа",
+    "initiatorId": "u-operator",
+    "status": "completed",
+    "currentStageOrder": 1,
+    "startedAt": "2026-05-15T11:00:00Z",
+    "finishedAt": "2026-05-15T16:45:00Z",
+    "documents": [],
+    "history": [
+      { "id": "h1", "timestamp": "2026-05-15T11:00:00Z", "actorId": "u-operator", "action": "started" },
+      { "id": "h2", "timestamp": "2026-05-15T16:45:00Z", "actorId": "u-chief", "action": "approved", "stageOrder": 1 }
+    ],
+    "participants": [
+      { "userId": "u-chief", "stageOrder": 1, "status": "approved", "decidedAt": "2026-05-15T16:45:00Z" }
+    ]
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "mc-1",
+    "source": "ips",
+    "target": "teamcenter",
+    "objectTypes": ["Деталь", "Сборочная единица", "Документ"],
+    "status": "active",
+    "updatedAt": "2026-05-20T11:00:00Z",
+    "successCount30d": 145,
+    "errorCount30d": 12
+  },
+  {
+    "id": "mc-2",
+    "source": "teamcenter",
+    "target": "1c",
+    "objectTypes": ["Деталь", "Сборочная единица"],
+    "status": "active",
+    "updatedAt": "2026-05-15T09:00:00Z",
+    "successCount30d": 78,
+    "errorCount30d": 4
+  },
+  {
+    "id": "mc-3",
+    "source": "ips",
+    "target": "1c",
+    "objectTypes": ["Деталь"],
+    "status": "draft",
+    "updatedAt": "2026-05-23T14:00:00Z",
+    "successCount30d": 0,
+    "errorCount30d": 0
+  }
+]
