@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ChevronDown, ChevronRight, Plus, MoreVertical, Edit3, Trash2, FolderPlus } from 'lucide-react'
 import { PageHeader } from '@/shared/ui/page-header'
@@ -229,6 +230,12 @@ function TreeRow({
   )
 }
 
+interface MenuCoords {
+  top: number
+  right: number
+  flipUp: boolean
+}
+
 function NodeMenu({
   node,
   onAction,
@@ -237,15 +244,55 @@ function NodeMenu({
   onAction: (action: ActionType, node: OrgUnit) => void
 }) {
   const [open, setOpen] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
+  const [coords, setCoords] = useState<MenuCoords>({ top: 0, right: 0, flipUp: false })
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const menuRef = useRef<HTMLUListElement>(null)
+
+  const computeCoords = (): MenuCoords => {
+    const rect = triggerRef.current?.getBoundingClientRect()
+    if (!rect) return { top: 0, right: 0, flipUp: false }
+    const menuHeight = 150
+    const spaceBelow = window.innerHeight - rect.bottom
+    const flipUp = spaceBelow < menuHeight && rect.top > menuHeight
+    return {
+      top: flipUp ? rect.top - 4 : rect.bottom + 4,
+      right: window.innerWidth - rect.right,
+      flipUp,
+    }
+  }
+
+  useLayoutEffect(() => {
+    if (open) setCoords(computeCoords())
+  }, [open])
 
   useEffect(() => {
     if (!open) return
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    const onMouseDown = (e: MouseEvent) => {
+      if (
+        triggerRef.current?.contains(e.target as Node) ||
+        menuRef.current?.contains(e.target as Node)
+      ) {
+        return
+      }
+      setOpen(false)
     }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    const onScroll = (e: Event) => {
+      if (menuRef.current?.contains(e.target as Node)) return
+      setOpen(false)
+    }
+    document.addEventListener('mousedown', onMouseDown)
+    document.addEventListener('keydown', onKey)
+    window.addEventListener('scroll', onScroll, true)
+    window.addEventListener('resize', () => setOpen(false))
+    return () => {
+      document.removeEventListener('mousedown', onMouseDown)
+      document.removeEventListener('keydown', onKey)
+      window.removeEventListener('scroll', onScroll, true)
+      window.removeEventListener('resize', () => setOpen(false))
+    }
   }, [open])
 
   const items: { label: string; icon: typeof Edit3; action: ActionType; destructive?: boolean }[] = [
@@ -255,8 +302,9 @@ function NodeMenu({
   ]
 
   return (
-    <div className="relative" ref={ref}>
+    <>
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label="Действия"
@@ -266,38 +314,47 @@ function NodeMenu({
       >
         <MoreVertical size={14} />
       </button>
-      {open && (
-        <ul
-          role="menu"
-          className="absolute z-30 right-0 top-full mt-1 w-52 bg-bg-surface border border-border-default rounded-md shadow-md py-1"
-        >
-          {items.map((item) => {
-            const Icon = item.icon
-            return (
-              <li key={item.action}>
-                <button
-                  type="button"
-                  role="menuitem"
-                  onClick={() => {
-                    onAction(item.action, node)
-                    setOpen(false)
-                  }}
-                  className={cn(
-                    'w-full flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-colors',
-                    item.destructive
-                      ? 'text-error-text hover:bg-error-bg'
-                      : 'text-text-primary hover:bg-bg-hover',
-                  )}
-                >
-                  <Icon size={14} />
-                  {item.label}
-                </button>
-              </li>
-            )
-          })}
-        </ul>
-      )}
-    </div>
+      {open &&
+        createPortal(
+          <ul
+            ref={menuRef}
+            role="menu"
+            style={{
+              position: 'fixed',
+              top: coords.flipUp ? undefined : coords.top,
+              bottom: coords.flipUp ? window.innerHeight - coords.top : undefined,
+              right: coords.right,
+            }}
+            className="z-[150] w-52 bg-bg-surface border border-border-default rounded-md shadow-lg py-1"
+          >
+            {items.map((item) => {
+              const Icon = item.icon
+              return (
+                <li key={item.action}>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      onAction(item.action, node)
+                      setOpen(false)
+                    }}
+                    className={cn(
+                      'w-full flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-colors',
+                      item.destructive
+                        ? 'text-error-text hover:bg-error-bg'
+                        : 'text-text-primary hover:bg-bg-hover',
+                    )}
+                  >
+                    <Icon size={14} />
+                    {item.label}
+                  </button>
+                </li>
+              )
+            })}
+          </ul>,
+          document.body,
+        )}
+    </>
   )
 }
 
