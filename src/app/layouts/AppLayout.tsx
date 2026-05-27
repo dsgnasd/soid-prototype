@@ -1,6 +1,5 @@
-import { Navigate, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { Navigate, NavLink, Outlet, useLocation } from 'react-router-dom'
 import {
-  LogOut,
   Moon,
   Sun,
   LayoutDashboard,
@@ -28,6 +27,7 @@ import { routes } from '@/shared/config/routes'
 import { cn } from '@/shared/lib/utils'
 import { IconButton } from '@/shared/ui/icon-button'
 import { NotificationsPanel } from '@/features/notifications/NotificationsPanel'
+import { ProfileMenu } from '@/features/profile/ProfileMenu'
 import type { RoleId } from '@/shared/types'
 
 interface NavItem {
@@ -55,7 +55,7 @@ const NAV: NavItem[] = [
   { to: routes.adminAccess, label: 'Управление доступами', icon: KeyRound, group: 'АДМИНИСТРИРОВАНИЕ', roles: ['admin', 'superadmin'] },
   { to: routes.adminOrgstructure, label: 'Оргструктура', icon: Network, group: 'АДМИНИСТРИРОВАНИЕ', roles: ['admin', 'superadmin'] },
   { to: routes.adminApprovalTemplates, label: 'Шаблоны согласования', icon: FileText, group: 'АДМИНИСТРИРОВАНИЕ', roles: ['admin', 'superadmin'] },
-  { to: routes.adminEscalations, label: 'Заявки эскалации', icon: ArrowUpRightFromSquare, group: 'АДМИНИСТРИРОВАНИЕ', roles: ['superadmin'] },
+  { to: routes.adminEscalations, label: 'Заявки эскалации', icon: ArrowUpRightFromSquare, group: 'АДМИНИСТРИРОВАНИЕ', roles: ['admin', 'superadmin'] },
 
   { to: routes.platformIntegrations, label: 'Интеграции', icon: Plug, group: 'ПЛАТФОРМА', roles: ['superadmin'] },
   { to: routes.platformMigrationConfig, label: 'Конфигурация миграций', icon: Database, group: 'ПЛАТФОРМА', roles: ['superadmin'] },
@@ -69,7 +69,6 @@ const NAV: NavItem[] = [
 export function AppLayout() {
   const auth = useAuth()
   const role = useCurrentRole()
-  const navigate = useNavigate()
   const location = useLocation()
   const { theme, toggle } = useTheme()
 
@@ -84,11 +83,6 @@ export function AppLayout() {
     acc[key].push(item)
     return acc
   }, {})
-
-  const handleLogout = () => {
-    auth.setUser(null)
-    navigate(routes.login)
-  }
 
   return (
     <div className="min-h-screen flex bg-bg-app text-text-primary">
@@ -167,30 +161,7 @@ export function AppLayout() {
             label={theme === 'dark' ? 'Светлая тема' : 'Тёмная тема'}
             onClick={toggle}
           />
-          <div className="flex items-center gap-3 h-11 px-3 rounded-md hover:bg-bg-hover">
-            <div className="w-8 h-8 rounded-sm bg-accent text-white grid place-items-center text-xs font-semibold">
-              {auth.user.fullName
-                .split(' ')
-                .slice(0, 2)
-                .map((p) => p[0])
-                .join('')}
-            </div>
-            <div className="hidden md:block leading-tight">
-              <div className="text-sm font-medium">{auth.user.fullName}</div>
-              <div className="text-[11px] text-text-muted">
-                {role === 'superadmin' ? 'Суперадминистратор' : role === 'admin' ? 'Администратор' : 'Оператор'}
-              </div>
-            </div>
-            <button
-              type="button"
-              aria-label="Выйти"
-              onClick={handleLogout}
-              className="ml-1 w-8 h-8 grid place-items-center rounded-sm text-text-muted hover:text-text-primary hover:bg-bg-subtle"
-              title="Выйти"
-            >
-              <LogOut size={16} />
-            </button>
-          </div>
+          <ProfileMenu />
         </header>
 
         {/* Content */}

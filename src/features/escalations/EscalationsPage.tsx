@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Check, X, AlertTriangle, Clock, Inbox } from 'lucide-react'
+import { Check, X, AlertTriangle, Clock, Inbox, Plus } from 'lucide-react'
 import { PageHeader } from '@/shared/ui/page-header'
 import { Panel } from '@/shared/ui/panel'
 import { Button } from '@/shared/ui/button'
@@ -11,6 +12,7 @@ import { formatDateTime } from '@/shared/lib/format'
 import { routes } from '@/shared/config/routes'
 import { cn } from '@/shared/lib/utils'
 import { ApiError } from '@/shared/api/client'
+import { useCurrentRole } from '@/shared/hooks/useAuth'
 import type { Escalation } from '@/shared/types'
 
 const URGENCY_VARIANT = {
@@ -47,9 +49,15 @@ const TYPE_LABEL = {
 }
 
 export function EscalationsPage() {
+  const role = useCurrentRole()
+  const isAdmin = role === 'admin'
+
   const { data = [], isLoading } = useQuery({
-    queryKey: ['escalations'],
-    queryFn: () => apiFetch<Escalation[]>('/escalations'),
+    queryKey: ['escalations', { authorId: isAdmin ? 'u-admin' : undefined }],
+    queryFn: () =>
+      apiFetch<Escalation[]>('/escalations', {
+        params: { authorId: isAdmin ? 'u-admin' : undefined },
+      }),
   })
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const selected = data.find((e) => e.id === selectedId) ?? data[0]
@@ -63,7 +71,20 @@ export function EscalationsPage() {
           { label: 'Заявки эскалации' },
         ]}
         title="Заявки эскалации"
-        subtitle="Запросы от администраторов на действия за пределами их scope"
+        subtitle={
+          isAdmin
+            ? 'Ваши запросы на действия вне scope — рассматриваются суперадминистратором'
+            : 'Запросы от администраторов на действия за пределами их scope'
+        }
+        actions={
+          isAdmin ? (
+            <Link to="/admin/escalations/new">
+              <Button size="sm" icon={<Plus size={14} />}>
+                Новая заявка
+              </Button>
+            </Link>
+          ) : undefined
+        }
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-5">
@@ -117,13 +138,19 @@ export function EscalationsPage() {
           )}
         </Panel>
 
-        {selected && <EscalationDetails escalation={selected} />}
+        {selected && <EscalationDetails escalation={selected} canResolve={!isAdmin} />}
       </div>
     </div>
   )
 }
 
-function EscalationDetails({ escalation }: { escalation: Escalation }) {
+function EscalationDetails({
+  escalation,
+  canResolve,
+}: {
+  escalation: Escalation
+  canResolve: boolean
+}) {
   const qc = useQueryClient()
   const [reason, setReason] = useState('')
   const [decision, setDecision] = useState<'approve' | 'reject' | null>(null)
@@ -167,6 +194,11 @@ function EscalationDetails({ escalation }: { escalation: Escalation }) {
           {escalation.rejectionReason && (
             <div className="mt-1 text-xs">Причина: {escalation.rejectionReason}</div>
           )}
+        </div>
+      ) : !canResolve ? (
+        <div className="p-3 rounded-md bg-bg-subtle border border-border-subtle text-sm text-text-muted">
+          Заявка ожидает рассмотрения суперадминистратором. Вы получите уведомление при изменении
+          статуса.
         </div>
       ) : (
         <>

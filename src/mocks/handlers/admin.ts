@@ -69,6 +69,20 @@ export const adminHandlers = [
     return HttpResponse.json(updated)
   }),
 
+  http.post('/api/users/bulk-action', async ({ request }) => {
+    await delay(380)
+    const body = (await request.json()) as {
+      ids: string[]
+      action: 'block' | 'unblock' | 'archive'
+    }
+    const targetStatus: User['status'] =
+      body.action === 'block' ? 'blocked' : body.action === 'unblock' ? 'active' : 'archived'
+    usersData = usersData.map((u) =>
+      body.ids.includes(u.id) ? { ...u, status: targetStatus } : u,
+    )
+    return HttpResponse.json({ updated: body.ids.length, status: targetStatus })
+  }),
+
   // OrgStructure
   http.get('/api/orgstructure', async () => {
     await delay(180)
@@ -130,6 +144,36 @@ export const adminHandlers = [
     })
     if (!updated) return HttpResponse.json({ code: 'NOT_FOUND' }, { status: 404 })
     return HttpResponse.json(updated)
+  }),
+
+  http.post('/api/roles', async ({ request }) => {
+    await delay(260)
+    const body = (await request.json()) as Omit<Role, 'id'>
+    if (rolesData.some((r) => r.name.toLowerCase() === body.name.toLowerCase())) {
+      return HttpResponse.json(
+        { code: 'NAME_TAKEN', message: 'Роль с таким названием уже существует' },
+        { status: 400 },
+      )
+    }
+    const id = `role-${body.name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`
+    const newRole: Role = { ...body, id, system: false }
+    rolesData = [newRole, ...rolesData]
+    return HttpResponse.json(newRole, { status: 201 })
+  }),
+
+  http.delete('/api/roles/:id', async ({ params }) => {
+    await delay(200)
+    const id = params.id as string
+    const role = rolesData.find((r) => r.id === id)
+    if (!role) return HttpResponse.json({ code: 'NOT_FOUND' }, { status: 404 })
+    if (role.system) {
+      return HttpResponse.json(
+        { code: 'SYSTEM_ROLE', message: 'Системную роль нельзя удалить' },
+        { status: 403 },
+      )
+    }
+    rolesData = rolesData.filter((r) => r.id !== id)
+    return new HttpResponse(null, { status: 204 })
   }),
 
   // Operations log

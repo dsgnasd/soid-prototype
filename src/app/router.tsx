@@ -24,6 +24,7 @@ import { PlatformHealthPage } from '@/features/platform/PlatformHealthPage'
 import { PlatformSettingsPage } from '@/features/platform/PlatformSettingsPage'
 import { PlatformMigrationConfigPage } from '@/features/platform/PlatformMigrationConfigPage'
 import { EscalationsPage } from '@/features/escalations/EscalationsPage'
+import { NewEscalationPage } from '@/features/escalations/NewEscalationPage'
 import { AboutPage } from '@/features/profile/AboutPage'
 import { routes } from '@/shared/config/routes'
 
@@ -60,6 +61,7 @@ const router = createBrowserRouter([
       { path: routes.orgstructure, element: <OrgStructurePage /> },
       { path: routes.adminApprovalTemplates, element: <ApprovalTemplatesPage /> },
       { path: routes.adminEscalations, element: <EscalationsPage /> },
+      { path: '/admin/escalations/new', element: <NewEscalationPage /> },
 
       { path: routes.platformIntegrations, element: <PlatformIntegrationsPage /> },
       { path: routes.platformMigrationConfig, element: <PlatformMigrationConfigPage /> },

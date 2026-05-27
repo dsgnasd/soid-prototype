@@ -81,9 +81,37 @@ export const platformHandlers = [
     })
   }),
 
-  http.get('/api/escalations', async () => {
+  http.get('/api/escalations', async ({ request }) => {
     await delay(220)
-    return HttpResponse.json(escalationsData)
+    const url = new URL(request.url)
+    const authorId = url.searchParams.get('authorId')
+    const data = authorId
+      ? escalationsData.filter((e) => e.authorId === authorId)
+      : escalationsData
+    return HttpResponse.json(data)
+  }),
+
+  http.post('/api/escalations', async ({ request }) => {
+    await delay(280)
+    const body = (await request.json()) as Omit<Escalation, 'id' | 'status' | 'createdAt'>
+    if (!body.description || body.description.length < 30) {
+      return HttpResponse.json(
+        { code: 'DESCRIPTION_TOO_SHORT', message: 'Описание заявки минимум 30 символов' },
+        { status: 400 },
+      )
+    }
+    const newEsc: Escalation = {
+      id: `esc-${Date.now()}`,
+      authorId: 'u-admin',
+      type: body.type,
+      description: body.description,
+      objectRef: body.objectRef,
+      urgency: body.urgency,
+      status: 'new',
+      createdAt: new Date().toISOString(),
+    }
+    escalationsData = [newEsc, ...escalationsData]
+    return HttpResponse.json(newEsc, { status: 201 })
   }),
 
   http.post('/api/escalations/:id/resolve', async ({ params, request }) => {
