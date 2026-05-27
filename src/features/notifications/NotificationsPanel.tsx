@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { Bell, BellOff, CheckCheck, AlertTriangle, ShieldAlert, Inbox, ServerCrash, ArrowUpRightFromSquare } from 'lucide-react'
 import { differenceInCalendarDays, parseISO } from 'date-fns'
@@ -42,81 +43,138 @@ function groupNotifications(items: Notification[]) {
   return { newer, today, earlier }
 }
 
+interface Coords {
+  top: number
+  right: number
+}
+
 export function NotificationsPanel() {
   const [open, setOpen] = useState(false)
+  const [coords, setCoords] = useState<Coords>({ top: 0, right: 0 })
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
+
   const { data, isLoading } = useNotifications()
   const markRead = useMarkRead()
   const markAllRead = useMarkAllRead()
-  const ref = useRef<HTMLDivElement>(null)
 
   const unreadCount = useMemo(
     () => (data ?? []).filter((n) => !n.readAt).length,
     [data],
   )
 
-  // Закрытие по клику вне панели
+  const computeCoords = (): Coords => {
+    const rect = triggerRef.current?.getBoundingClientRect()
+    if (!rect) return { top: 0, right: 0 }
+    return {
+      top: rect.bottom + 8,
+      right: window.innerWidth - rect.right,
+    }
+  }
+
+  useLayoutEffect(() => {
+    if (open) setCoords(computeCoords())
+  }, [open])
+
   useEffect(() => {
     if (!open) return
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false)
+    const onMouseDown = (e: MouseEvent) => {
+      if (
+        triggerRef.current?.contains(e.target as Node) ||
+        panelRef.current?.contains(e.target as Node)
+      ) {
+        return
       }
+      setOpen(false)
     }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    const onResize = () => setOpen(false)
+    document.addEventListener('mousedown', onMouseDown)
+    document.addEventListener('keydown', onKey)
+    window.addEventListener('resize', onResize)
+    return () => {
+      document.removeEventListener('mousedown', onMouseDown)
+      document.removeEventListener('keydown', onKey)
+      window.removeEventListener('resize', onResize)
+    }
   }, [open])
 
   const groups = groupNotifications(data ?? [])
 
   return (
-    <div className="relative" ref={ref}>
+    <>
       <IconButton
+        ref={triggerRef}
         icon={<Bell size={20} />}
         label="Уведомления"
         badge={unreadCount}
         onClick={() => setOpen((v) => !v)}
       />
 
-      {open && (
-        <div className="absolute top-full right-0 mt-2 w-[380px] bg-bg-surface border border-border-default rounded-xl shadow-lg z-[60] overflow-hidden">
-          <header className="flex items-center justify-between px-4 py-3 border-b border-border-subtle">
-            <h3 className="text-sm font-semibold text-text-primary">Уведомления</h3>
-            {unreadCount > 0 && (
-              <button
-                type="button"
-                onClick={() => markAllRead.mutate()}
-                disabled={markAllRead.isPending}
-                className="text-xs font-medium text-accent hover:text-accent-hover disabled:opacity-50"
-              >
-                Прочитать все
-              </button>
-            )}
-          </header>
+      {open &&
+        createPortal(
+          <div
+            ref={panelRef}
+            style={{
+              position: 'fixed',
+              top: coords.top,
+              right: coords.right,
+            }}
+            className="w-[380px] bg-bg-surface border border-border-default rounded-xl shadow-lg z-[150] overflow-hidden"
+          >
+            <header className="flex items-center justify-between px-4 py-3 border-b border-border-subtle">
+              <h3 className="text-sm font-semibold text-text-primary">Уведомления</h3>
+              {unreadCount > 0 && (
+                <button
+                  type="button"
+                  onClick={() => markAllRead.mutate()}
+                  disabled={markAllRead.isPending}
+                  className="text-xs font-medium text-accent hover:text-accent-hover disabled:opacity-50"
+                >
+                  Прочитать все
+                </button>
+              )}
+            </header>
 
-          <div className="max-h-[480px] overflow-y-auto scrollbar-thin">
-            {isLoading ? (
-              <div className="p-4 space-y-2">
-                {[0, 1, 2].map((i) => (
-                  <div key={i} className="h-14 rounded-md bg-bg-hover animate-pulse" />
-                ))}
-              </div>
-            ) : (data ?? []).length === 0 ? (
-              <EmptyState
-                icon={<BellOff size={40} className="text-text-muted" />}
-                title="Нет уведомлений"
-                description="Здесь появятся события по вашим задачам и процессам."
-              />
-            ) : (
-              <>
-                <Group title="Новые" items={groups.newer} onClick={(n) => onItemClick(n, () => setOpen(false), markRead.mutate)} />
-                <Group title="Сегодня" items={groups.today} onClick={(n) => onItemClick(n, () => setOpen(false), markRead.mutate)} />
-                <Group title="Раньше" items={groups.earlier} onClick={(n) => onItemClick(n, () => setOpen(false), markRead.mutate)} />
-              </>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
+            <div className="max-h-[480px] overflow-y-auto scrollbar-thin">
+              {isLoading ? (
+                <div className="p-4 space-y-2">
+                  {[0, 1, 2].map((i) => (
+                    <div key={i} className="h-14 rounded-md bg-bg-hover animate-pulse" />
+                  ))}
+                </div>
+              ) : (data ?? []).length === 0 ? (
+                <EmptyState
+                  icon={<BellOff size={40} className="text-text-muted" />}
+                  title="Нет уведомлений"
+                  description="Здесь появятся события по вашим задачам и процессам."
+                />
+              ) : (
+                <>
+                  <Group
+                    title="Новые"
+                    items={groups.newer}
+                    onClick={(n) => onItemClick(n, () => setOpen(false), markRead.mutate)}
+                  />
+                  <Group
+                    title="Сегодня"
+                    items={groups.today}
+                    onClick={(n) => onItemClick(n, () => setOpen(false), markRead.mutate)}
+                  />
+                  <Group
+                    title="Раньше"
+                    items={groups.earlier}
+                    onClick={(n) => onItemClick(n, () => setOpen(false), markRead.mutate)}
+                  />
+                </>
+              )}
+            </div>
+          </div>,
+          document.body,
+        )}
+    </>
   )
 }
 

@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { ChevronDown, LogOut, KeyRound, UserCircle2, RefreshCw, Info } from 'lucide-react'
@@ -28,18 +29,46 @@ export function ProfileMenu() {
   const role = useCurrentRole()
   const { setUser } = useAuth()
   const navigate = useNavigate()
-  const ref = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
   const [open, setOpen] = useState(false)
+  const [coords, setCoords] = useState<{ top: number; right: number }>({ top: 0, right: 0 })
   const [showPasswordModal, setShowPasswordModal] = useState(false)
   const [showSwitchModal, setShowSwitchModal] = useState(false)
 
+  const computeCoords = () => {
+    const rect = triggerRef.current?.getBoundingClientRect()
+    if (!rect) return { top: 0, right: 0 }
+    return { top: rect.bottom + 8, right: window.innerWidth - rect.right }
+  }
+
+  useLayoutEffect(() => {
+    if (open) setCoords(computeCoords())
+  }, [open])
+
   useEffect(() => {
     if (!open) return
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    const onMouseDown = (e: MouseEvent) => {
+      if (
+        triggerRef.current?.contains(e.target as Node) ||
+        menuRef.current?.contains(e.target as Node)
+      ) {
+        return
+      }
+      setOpen(false)
     }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    const onResize = () => setOpen(false)
+    document.addEventListener('mousedown', onMouseDown)
+    document.addEventListener('keydown', onKey)
+    window.addEventListener('resize', onResize)
+    return () => {
+      document.removeEventListener('mousedown', onMouseDown)
+      document.removeEventListener('keydown', onKey)
+      window.removeEventListener('resize', onResize)
+    }
   }, [open])
 
   if (!user) return null
@@ -57,31 +86,38 @@ export function ProfileMenu() {
 
   return (
     <>
-      <div className="relative" ref={ref}>
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          aria-haspopup="menu"
-          aria-expanded={open}
-          className={cn(
-            'flex items-center gap-3 h-11 px-2 pr-3 rounded-md transition-colors',
-            open ? 'bg-bg-hover' : 'hover:bg-bg-hover',
-          )}
-        >
-          <div className="w-8 h-8 rounded-sm bg-accent text-white grid place-items-center text-xs font-semibold shrink-0">
-            {initials}
-          </div>
-          <div className="hidden md:block leading-tight text-left">
-            <div className="text-sm font-medium text-text-primary">{user.fullName}</div>
-            <div className="text-[11px] text-text-muted">{ROLE_LABELS[role]}</div>
-          </div>
-          <ChevronDown size={14} className="text-text-muted hidden md:block" />
-        </button>
+      <button
+        ref={triggerRef}
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        className={cn(
+          'flex items-center gap-3 h-11 px-2 pr-3 rounded-md transition-colors',
+          open ? 'bg-bg-hover' : 'hover:bg-bg-hover',
+        )}
+      >
+        <div className="w-8 h-8 rounded-sm bg-accent text-white grid place-items-center text-xs font-semibold shrink-0">
+          {initials}
+        </div>
+        <div className="hidden md:block leading-tight text-left">
+          <div className="text-sm font-medium text-text-primary">{user.fullName}</div>
+          <div className="text-[11px] text-text-muted">{ROLE_LABELS[role]}</div>
+        </div>
+        <ChevronDown size={14} className="text-text-muted hidden md:block" />
+      </button>
 
-        {open && (
+      {open &&
+        createPortal(
           <div
+            ref={menuRef}
             role="menu"
-            className="absolute top-full right-0 mt-2 w-[320px] bg-bg-surface border border-border-default rounded-xl shadow-lg z-[60] overflow-hidden"
+            style={{
+              position: 'fixed',
+              top: coords.top,
+              right: coords.right,
+            }}
+            className="w-[320px] bg-bg-surface border border-border-default rounded-xl shadow-lg z-[150] overflow-hidden"
           >
             {/* Header */}
             <div className="px-4 py-3 border-b border-border-subtle">
@@ -156,9 +192,9 @@ export function ProfileMenu() {
                 destructive
               />
             </div>
-          </div>
+          </div>,
+          document.body,
         )}
-      </div>
 
       {showPasswordModal && <ChangePasswordModal onClose={() => setShowPasswordModal(false)} />}
       {showSwitchModal && <SwitchRoleModal onClose={() => setShowSwitchModal(false)} />}
