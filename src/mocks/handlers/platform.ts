@@ -50,6 +50,40 @@ export const platformHandlers = [
     return HttpResponse.json(updated)
   }),
 
+  http.post('/api/integrations', async ({ request }) => {
+    await delay(280)
+    const body = (await request.json()) as Omit<Integration, 'id' | 'status' | 'lastCheckAt' | 'responseTimeMs' | 'activeMigrations' | 'errorsLast24h'>
+    const newIntegration: Integration = {
+      ...body,
+      id: `int-${Date.now()}`,
+      status: 'online',
+      lastCheckAt: new Date().toISOString(),
+      responseTimeMs: 100,
+      activeMigrations: 0,
+      errorsLast24h: 0,
+    }
+    integrationsData = [...integrationsData, newIntegration]
+    return HttpResponse.json(newIntegration, { status: 201 })
+  }),
+
+  http.delete('/api/integrations/:id', async ({ params }) => {
+    await delay(220)
+    const id = params.id as string
+    const integration = integrationsData.find((i) => i.id === id)
+    if (!integration) return HttpResponse.json({ code: 'NOT_FOUND' }, { status: 404 })
+    if (integration.activeMigrations > 0) {
+      return HttpResponse.json(
+        {
+          code: 'HAS_ACTIVE_MIGRATIONS',
+          message: `Нельзя удалить: идёт ${integration.activeMigrations} активных миграций`,
+        },
+        { status: 409 },
+      )
+    }
+    integrationsData = integrationsData.filter((i) => i.id !== id)
+    return new HttpResponse(null, { status: 204 })
+  }),
+
   http.get('/api/migration-config', async () => {
     await delay(180)
     return HttpResponse.json(migrationConfigData)

@@ -3,13 +3,14 @@ import usersFull from '../fixtures/users-full.json'
 import orgstructure from '../fixtures/orgstructure.json'
 import roles from '../fixtures/roles.json'
 import operations from '../fixtures/operations.json'
-import templates from '../fixtures/approval-templates.json'
-import type { OrgUnit, Operation, Role, User } from '@/shared/types'
+import templatesFixture from '../fixtures/approval-templates.json'
+import type { ApprovalTemplate, OrgUnit, Operation, Role, User } from '@/shared/types'
 
 let usersData = usersFull as User[]
 let orgData = orgstructure as OrgUnit[]
 let rolesData = roles as Role[]
 const operationsData = operations as Operation[]
+let templatesData = templatesFixture as ApprovalTemplate[]
 
 export const adminHandlers = [
   // Users
@@ -199,6 +200,59 @@ export const adminHandlers = [
   // Templates list (for admin)
   http.get('/api/admin/approval-templates', async () => {
     await delay(180)
-    return HttpResponse.json(templates)
+    return HttpResponse.json(templatesData)
+  }),
+
+  http.get('/api/admin/approval-templates/:id', async ({ params }) => {
+    await delay(150)
+    const tpl = templatesData.find((t) => t.id === params.id)
+    if (!tpl) return HttpResponse.json({ code: 'NOT_FOUND' }, { status: 404 })
+    return HttpResponse.json(tpl)
+  }),
+
+  http.post('/api/admin/approval-templates', async ({ request }) => {
+    await delay(280)
+    const body = (await request.json()) as Omit<ApprovalTemplate, 'id' | 'version'>
+    if (!body.name || body.name.length < 3) {
+      return HttpResponse.json(
+        { code: 'NAME_TOO_SHORT', message: 'Название минимум 3 символа' },
+        { status: 400 },
+      )
+    }
+    if (!body.stages || body.stages.length === 0) {
+      return HttpResponse.json(
+        { code: 'NO_STAGES', message: 'Шаблон должен содержать хотя бы один этап' },
+        { status: 400 },
+      )
+    }
+    const id = `tpl-${Date.now()}`
+    const newTpl: ApprovalTemplate = { ...body, id, version: 1 }
+    templatesData = [newTpl, ...templatesData]
+    return HttpResponse.json(newTpl, { status: 201 })
+  }),
+
+  http.patch('/api/admin/approval-templates/:id', async ({ params, request }) => {
+    await delay(240)
+    const body = (await request.json()) as Partial<ApprovalTemplate>
+    const id = params.id as string
+    let updated: ApprovalTemplate | null = null
+    templatesData = templatesData.map((t) => {
+      if (t.id === id) {
+        updated = { ...t, ...body, version: t.version + 1 }
+        return updated
+      }
+      return t
+    })
+    if (!updated) return HttpResponse.json({ code: 'NOT_FOUND' }, { status: 404 })
+    return HttpResponse.json(updated)
+  }),
+
+  http.delete('/api/admin/approval-templates/:id', async ({ params }) => {
+    await delay(200)
+    const id = params.id as string
+    const tpl = templatesData.find((t) => t.id === id)
+    if (!tpl) return HttpResponse.json({ code: 'NOT_FOUND' }, { status: 404 })
+    templatesData = templatesData.filter((t) => t.id !== id)
+    return new HttpResponse(null, { status: 204 })
   }),
 ]
