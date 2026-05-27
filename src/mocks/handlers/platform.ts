@@ -5,7 +5,7 @@ import escalations from '../fixtures/escalations.json'
 import type { Escalation, Integration, MigrationPair } from '@/shared/types'
 
 let integrationsData = integrations as Integration[]
-const migrationConfigData = migrationConfig as MigrationPair[]
+let migrationConfigData = migrationConfig as MigrationPair[]
 let escalationsData = escalations as Escalation[]
 
 export const platformHandlers = [
@@ -87,6 +87,60 @@ export const platformHandlers = [
   http.get('/api/migration-config', async () => {
     await delay(180)
     return HttpResponse.json(migrationConfigData)
+  }),
+
+  http.post('/api/migration-config', async ({ request }) => {
+    await delay(280)
+    const body = (await request.json()) as Omit<MigrationPair, 'id' | 'updatedAt' | 'successCount30d' | 'errorCount30d'>
+    if (body.source === body.target) {
+      return HttpResponse.json(
+        { code: 'SAME_SYSTEM', message: 'Исходная и целевая системы должны различаться' },
+        { status: 400 },
+      )
+    }
+    const exists = migrationConfigData.some(
+      (m) => m.source === body.source && m.target === body.target,
+    )
+    if (exists) {
+      return HttpResponse.json(
+        { code: 'PAIR_EXISTS', message: 'Такая пара миграции уже настроена' },
+        { status: 409 },
+      )
+    }
+    const newPair: MigrationPair = {
+      ...body,
+      id: `mc-${Date.now()}`,
+      updatedAt: new Date().toISOString(),
+      successCount30d: 0,
+      errorCount30d: 0,
+    }
+    migrationConfigData = [...migrationConfigData, newPair]
+    return HttpResponse.json(newPair, { status: 201 })
+  }),
+
+  http.patch('/api/migration-config/:id', async ({ params, request }) => {
+    await delay(220)
+    const body = (await request.json()) as Partial<MigrationPair>
+    const id = params.id as string
+    let updated: MigrationPair | null = null
+    migrationConfigData = migrationConfigData.map((m) => {
+      if (m.id === id) {
+        updated = { ...m, ...body, updatedAt: new Date().toISOString() }
+        return updated
+      }
+      return m
+    })
+    if (!updated) return HttpResponse.json({ code: 'NOT_FOUND' }, { status: 404 })
+    return HttpResponse.json(updated)
+  }),
+
+  http.delete('/api/migration-config/:id', async ({ params }) => {
+    await delay(200)
+    const id = params.id as string
+    const pair = migrationConfigData.find((m) => m.id === id)
+    if (!pair) return HttpResponse.json({ code: 'NOT_FOUND' }, { status: 404 })
+    migrationConfigData = migrationConfigData.filter((m) => m.id !== id)
+    return new HttpResponse(null, { status: 204 })
   }),
 
   http.get('/api/platform/health', async () => {
