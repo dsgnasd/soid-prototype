@@ -93,6 +93,12 @@ export const adminHandlers = [
   http.post('/api/orgstructure', async ({ request }) => {
     await delay(220)
     const body = (await request.json()) as { name: string; parentId: string | null; description?: string }
+    if (body.parentId && !orgData.some((o) => o.id === body.parentId)) {
+      return HttpResponse.json(
+        { code: 'PARENT_NOT_FOUND', message: 'Родительское подразделение не найдено' },
+        { status: 400 },
+      )
+    }
     const newOu: OrgUnit = {
       id: `ou-${Date.now()}`,
       name: body.name,
@@ -101,6 +107,48 @@ export const adminHandlers = [
     }
     orgData = [...orgData, newOu]
     return HttpResponse.json(newOu, { status: 201 })
+  }),
+
+  http.patch('/api/orgstructure/:id', async ({ params, request }) => {
+    await delay(220)
+    const id = params.id as string
+    const body = (await request.json()) as Partial<OrgUnit>
+    if (body.parentId === id) {
+      return HttpResponse.json(
+        { code: 'SELF_PARENT', message: 'Подразделение не может быть родителем самому себе' },
+        { status: 400 },
+      )
+    }
+    // Проверка циклов: новый parentId не должен быть потомком текущего узла
+    if (body.parentId) {
+      const descendants = new Set<string>([id])
+      let added = true
+      while (added) {
+        added = false
+        orgData.forEach((u) => {
+          if (u.parentId && descendants.has(u.parentId) && !descendants.has(u.id)) {
+            descendants.add(u.id)
+            added = true
+          }
+        })
+      }
+      if (descendants.has(body.parentId)) {
+        return HttpResponse.json(
+          { code: 'CYCLE', message: 'Нельзя поместить подразделение внутрь его потомка' },
+          { status: 400 },
+        )
+      }
+    }
+    let updated: OrgUnit | null = null
+    orgData = orgData.map((o) => {
+      if (o.id === id) {
+        updated = { ...o, ...body }
+        return updated
+      }
+      return o
+    })
+    if (!updated) return HttpResponse.json({ code: 'NOT_FOUND' }, { status: 404 })
+    return HttpResponse.json(updated)
   }),
 
   http.delete('/api/orgstructure/:id', async ({ params }) => {

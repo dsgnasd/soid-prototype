@@ -6,11 +6,44 @@ import { Panel } from '@/shared/ui/panel'
 import { Button } from '@/shared/ui/button'
 import { Skeleton } from '@/shared/ui/empty-state'
 import { Modal } from '@/shared/ui/modal'
+import { Select } from '@/shared/ui/select'
 import { FormField, TextInput, TextArea } from '@/shared/ui/form-field'
 import { apiFetch, ApiError } from '@/shared/api/client'
 import { routes } from '@/shared/config/routes'
 import { cn } from '@/shared/lib/utils'
 import type { OrgUnit } from '@/shared/types'
+
+function buildParentOptions(
+  units: OrgUnit[],
+  excludeIds: Set<string> = new Set(),
+): { value: string; label: string }[] {
+  const tree = buildTree(units)
+  const out: { value: string; label: string }[] = [
+    { value: '', label: '— Корневое подразделение' },
+  ]
+  const walk = (node: TreeNode, depth: number) => {
+    if (excludeIds.has(node.id)) return
+    out.push({ value: node.id, label: '  '.repeat(depth) + node.name })
+    node.children.forEach((c) => walk(c, depth + 1))
+  }
+  tree.forEach((n) => walk(n, 0))
+  return out
+}
+
+function getDescendantsIncluding(units: OrgUnit[], rootId: string): Set<string> {
+  const ids = new Set<string>([rootId])
+  let added = true
+  while (added) {
+    added = false
+    units.forEach((u) => {
+      if (u.parentId && ids.has(u.parentId) && !ids.has(u.id)) {
+        ids.add(u.id)
+        added = true
+      }
+    })
+  }
+  return ids
+}
 
 interface TreeNode extends OrgUnit {
   children: TreeNode[]
@@ -113,13 +146,21 @@ export function OrgStructurePage() {
       </Panel>
 
       {dialog?.mode === 'create-root' && (
-        <OrgUnitFormModal parent={null} onClose={() => setDialog(null)} />
+        <OrgUnitFormModal parent={null} allUnits={units} onClose={() => setDialog(null)} />
       )}
       {dialog?.mode === 'create-child' && (
-        <OrgUnitFormModal parent={dialog.parent} onClose={() => setDialog(null)} />
+        <OrgUnitFormModal
+          parent={dialog.parent}
+          allUnits={units}
+          onClose={() => setDialog(null)}
+        />
       )}
       {dialog?.mode === 'edit' && (
-        <OrgUnitFormModal node={dialog.node} onClose={() => setDialog(null)} />
+        <OrgUnitFormModal
+          node={dialog.node}
+          allUnits={units}
+          onClose={() => setDialog(null)}
+        />
       )}
       {dialog?.mode === 'delete' && (
         <DeleteConfirmModal node={dialog.node} onClose={() => setDialog(null)} />
@@ -267,39 +308,59 @@ function NodeMenu({
 interface FormModalProps {
   parent?: OrgUnit | null
   node?: OrgUnit
+  allUnits: OrgUnit[]
   onClose: () => void
 }
 
-function OrgUnitFormModal({ parent, node, onClose }: FormModalProps) {
+function OrgUnitFormModal({ parent, node, allUnits, onClose }: FormModalProps) {
   const qc = useQueryClient()
   const isEdit = Boolean(node)
   const [name, setName] = useState(node?.name ?? '')
   const [description, setDescription] = useState(node?.description ?? '')
+  const [parentId, setParentId] = useState<string>(
+    node?.parentId ?? parent?.id ?? '',
+  )
   const [error, setError] = useState<string | null>(null)
+
+  // При редактировании исключаем сам узел и всех его потомков из списка возможных родителей
+  const excludeIds = isEdit && node ? getDescendantsIncluding(allUnits, node.id) : new Set<string>()
+  const parentOptions = buildParentOptions(allUnits, excludeIds)
 
   const createMutation = useMutation({
     mutationFn: () =>
       apiFetch<OrgUnit>('/orgstructure', {
         method: 'POST',
-        body: { name, description: description || undefined, parentId: parent?.id ?? null },
+        body: {
+          name,
+          description: description || undefined,
+          parentId: parentId || null,
+        },
       }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: QK })
       onClose()
     },
+    onError: (err: Error) => {
+      setError(err instanceof ApiError ? err.message : 'Ошибка создания')
+    },
   })
 
-  // Edit endpoint не реализован в MSW — для прототипа симулируем оптимистично.
-  // Здесь оставлен как заглушка для будущей реализации.
   const editMutation = useMutation({
-    mutationFn: async () => {
-      // Симуляция: эмулируем сервер локально
-      await new Promise((r) => setTimeout(r, 250))
-      return { ...node!, name, description }
-    },
+    mutationFn: () =>
+      apiFetch<OrgUnit>(`/orgstructure/${node!.id}`, {
+        method: 'PATCH',
+        body: {
+          name,
+          description: description || undefined,
+          parentId: parentId || null,
+        },
+      }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: QK })
       onClose()
+    },
+    onError: (err: Error) => {
+      setError(err instanceof ApiError ? err.message : 'Ошибка сохранения')
     },
   })
 
@@ -314,10 +375,12 @@ function OrgUnitFormModal({ parent, node, onClose }: FormModalProps) {
     else createMutation.mutate()
   }
 
+  const willMove = isEdit && node && parentId !== (node.parentId ?? '')
+
   const title = isEdit
     ? `Редактирование: ${node?.name}`
     : parent
-      ? `Добавить дочернее в «${parent.name}»`
+      ? `Добавить в «${parent.name}»`
       : 'Добавить подразделение'
 
   const isPending = createMutation.isPending || editMutation.isPending
@@ -357,10 +420,27 @@ function OrgUnitFormModal({ parent, node, onClose }: FormModalProps) {
             rows={2}
           />
         </FormField>
-        {parent && (
-          <div className="rounded-md bg-bg-subtle border border-border-subtle p-3 text-xs">
-            <div className="text-text-muted mb-0.5">Родительское подразделение</div>
-            <div className="text-text-primary font-medium">{parent.name}</div>
+
+        <FormField
+          label="Родительское подразделение"
+          hint={
+            isEdit
+              ? 'Можно переместить подразделение, выбрав другого родителя'
+              : 'Выберите место в иерархии — корневое или внутри существующего узла'
+          }
+        >
+          <Select
+            value={parentId}
+            onChange={setParentId}
+            options={parentOptions}
+            ariaLabel="Родительское подразделение"
+          />
+        </FormField>
+
+        {willMove && (
+          <div className="rounded-md bg-warning-bg text-warning-text text-xs p-3">
+            ⚠ Подразделение «{node!.name}» будет перемещено.{' '}
+            Все его дочерние узлы и закреплённые пользователи переедут вместе с ним.
           </div>
         )}
       </form>
