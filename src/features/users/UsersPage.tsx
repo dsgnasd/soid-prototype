@@ -10,6 +10,7 @@ import { Select } from '@/shared/ui/select'
 import { Modal } from '@/shared/ui/modal'
 import { FormField, TextInput } from '@/shared/ui/form-field'
 import { apiFetch } from '@/shared/api/client'
+import { toast } from '@/shared/ui/toast'
 import { formatDate } from '@/shared/lib/format'
 import { routes } from '@/shared/config/routes'
 import { cn } from '@/shared/lib/utils'
@@ -272,10 +273,14 @@ function BulkActionBar({
         method: 'POST',
         body: { ids, action },
       }),
-    onSuccess: () => {
+    onSuccess: (_data, action) => {
       qc.invalidateQueries({ queryKey: QK_USERS })
+      const label =
+        action === 'block' ? 'заблокированы' : action === 'unblock' ? 'разблокированы' : 'обновлены'
+      toast.success(`Пользователи ${label}`, `Затронуто записей: ${ids.length}`)
       onClear()
     },
+    onError: () => toast.error('Не удалось выполнить массовое действие'),
   })
 
   return (
@@ -356,19 +361,25 @@ function UserFormModal({ mode, user, orgUnits, onClose }: UserFormModalProps) {
       }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: QK_USERS })
+      toast.success('Пользователь создан', 'Ссылка для установки пароля отправлена на email')
       onClose()
     },
     onError: (err: Error) => {
       if (err.message.includes('Email')) setErrors({ email: err.message })
+      else toast.error('Не удалось создать пользователя', err.message)
     },
   })
 
   const patchMutation = useMutation({
     mutationFn: (patch: Partial<User>) =>
       apiFetch<User>(`/users/${user!.id}`, { method: 'PATCH', body: patch }),
-    onSuccess: () => {
+    onSuccess: (_data, patch) => {
       qc.invalidateQueries({ queryKey: QK_USERS })
+      if (patch.status === 'blocked') toast.success('Пользователь заблокирован')
+      else if (patch.status === 'active') toast.success('Пользователь разблокирован')
+      else toast.success('Изменения сохранены')
     },
+    onError: (err: Error) => toast.error('Не удалось сохранить', err.message),
   })
 
   const validate = (): boolean => {

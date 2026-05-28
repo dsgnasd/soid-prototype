@@ -10,6 +10,7 @@ import { Modal } from '@/shared/ui/modal'
 import { Select } from '@/shared/ui/select'
 import { FormField } from '@/shared/ui/form-field'
 import { apiFetch, ApiError } from '@/shared/api/client'
+import { toast } from '@/shared/ui/toast'
 import { formatDate } from '@/shared/lib/format'
 import { routes } from '@/shared/config/routes'
 import { cn } from '@/shared/lib/utils'
@@ -59,7 +60,11 @@ export function PlatformMigrationConfigPage() {
         method: 'PATCH',
         body: { status },
       }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: QK }),
+    onSuccess: (_d, { status }) => {
+      qc.invalidateQueries({ queryKey: QK })
+      toast.success(status === 'disabled' ? 'Пара отключена' : 'Пара включена')
+    },
+    onError: (err: Error) => toast.error('Не удалось изменить статус', err.message),
   })
 
   return (
@@ -276,6 +281,7 @@ function PairFormModal({
       }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: QK })
+      toast.success('Пара миграции создана')
       onClose()
     },
     onError: (err: Error) => {
@@ -294,8 +300,10 @@ function PairFormModal({
       }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: QK })
+      toast.success('Изменения сохранены')
       onClose()
     },
+    onError: (err: Error) => toast.error('Не удалось сохранить', err.message),
   })
 
   const validate = (): boolean => {
@@ -453,6 +461,7 @@ function DeletePairModal({
     mutationFn: () => apiFetch<void>(`/migration-config/${pair.id}`, { method: 'DELETE' }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: QK })
+      toast.success('Пара миграции удалена')
       onClose()
     },
     onError: (err: Error) => {

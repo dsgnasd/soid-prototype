@@ -10,6 +10,7 @@ import { Modal } from '@/shared/ui/modal'
 import { Select } from '@/shared/ui/select'
 import { FormField, TextInput } from '@/shared/ui/form-field'
 import { apiFetch, ApiError } from '@/shared/api/client'
+import { toast } from '@/shared/ui/toast'
 import { formatDateTime } from '@/shared/lib/format'
 import { routes } from '@/shared/config/routes'
 import type { ExternalSystemKey, Integration } from '@/shared/types'
@@ -99,7 +100,11 @@ function IntegrationCard({
         method: 'PATCH',
         body: { enabled: !integration.enabled },
       }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: QK }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: QK })
+      toast.success(integration.enabled ? 'Подключение отключено' : 'Подключение включено')
+    },
+    onError: (err: Error) => toast.error('Не удалось изменить статус', err.message),
   })
 
   const online = integration.status === 'online'
@@ -253,8 +258,10 @@ function IntegrationFormModal({
       }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: QK })
+      toast.success('Подключение создано')
       onClose()
     },
+    onError: (err: Error) => toast.error('Не удалось создать подключение', err.message),
   })
 
   const editMutation = useMutation({
@@ -270,8 +277,10 @@ function IntegrationFormModal({
       }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: QK })
+      toast.success('Изменения сохранены')
       onClose()
     },
+    onError: (err: Error) => toast.error('Не удалось сохранить', err.message),
   })
 
   const validate = (): boolean => {
@@ -460,6 +469,7 @@ function DeleteIntegrationModal({
     mutationFn: () => apiFetch<void>(`/integrations/${integration.id}`, { method: 'DELETE' }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: QK })
+      toast.success('Подключение удалено')
       onClose()
     },
     onError: (err: Error) => {

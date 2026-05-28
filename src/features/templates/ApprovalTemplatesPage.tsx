@@ -18,6 +18,7 @@ import { Modal } from '@/shared/ui/modal'
 import { Select } from '@/shared/ui/select'
 import { FormField, TextInput, TextArea } from '@/shared/ui/form-field'
 import { apiFetch, ApiError } from '@/shared/api/client'
+import { toast } from '@/shared/ui/toast'
 import { routes } from '@/shared/config/routes'
 import { cn } from '@/shared/lib/utils'
 import type { ApprovalStage, ApprovalTemplate } from '@/shared/types'
@@ -356,12 +357,16 @@ function TemplateFormModal({
             body,
           })
     },
-    onSuccess: () => {
+    onSuccess: (_data, payload) => {
       qc.invalidateQueries({ queryKey: QK })
+      toast.success(
+        payload.publish ? 'Шаблон опубликован' : isEdit ? 'Шаблон сохранён' : 'Черновик сохранён',
+      )
       onClose()
     },
     onError: (err: Error) => {
       if (err instanceof ApiError) setErrors({ stages: err.message })
+      else toast.error('Не удалось сохранить шаблон', err.message)
     },
   })
 
@@ -566,6 +571,7 @@ function DeleteTemplateModal({
       apiFetch<void>(`/admin/approval-templates/${template.id}`, { method: 'DELETE' }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: QK })
+      toast.success('Шаблон удалён')
       onClose()
     },
     onError: (err: Error) => {

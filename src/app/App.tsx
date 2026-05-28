@@ -1,6 +1,7 @@
 import { Providers } from './providers'
 import { AppRouter } from './router'
 import { useTheme } from '@/shared/hooks/useTheme'
+import { Toaster } from '@/shared/ui/toast'
 
 export function App() {
   // Активируем тему на html элемента при старте
@@ -8,6 +9,7 @@ export function App() {
   return (
     <Providers>
       <AppRouter />
+      <Toaster />
     </Providers>
   )
 }

@@ -9,6 +9,7 @@ import { Skeleton } from '@/shared/ui/empty-state'
 import { Modal } from '@/shared/ui/modal'
 import { FormField, TextInput } from '@/shared/ui/form-field'
 import { apiFetch, ApiError } from '@/shared/api/client'
+import { toast } from '@/shared/ui/toast'
 import { routes } from '@/shared/config/routes'
 import { cn } from '@/shared/lib/utils'
 import type { Permission, PermissionAction, Role, User } from '@/shared/types'
@@ -310,11 +311,14 @@ function RoleFormModal({
       }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: QK_ROLES })
+      toast.success('Роль создана')
       onClose()
     },
     onError: (err: Error) => {
       if (err instanceof ApiError && err.code === 'NAME_TAKEN') {
         setErrors({ name: err.message })
+      } else {
+        toast.error('Не удалось создать роль', err.message)
       }
     },
   })
@@ -327,8 +331,10 @@ function RoleFormModal({
       }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: QK_ROLES })
+      toast.success('Роль обновлена')
       onClose()
     },
+    onError: (err: Error) => toast.error('Не удалось сохранить роль', err.message),
   })
 
   const totalPerms = permissions.reduce((sum, p) => sum + p.actions.length, 0)
@@ -446,6 +452,7 @@ function DeleteRoleModal({ role, onClose }: { role: Role; onClose: () => void })
     mutationFn: () => apiFetch<void>(`/roles/${role.id}`, { method: 'DELETE' }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: QK_ROLES })
+      toast.success('Роль удалена')
       onClose()
     },
     onError: (err: Error) => {

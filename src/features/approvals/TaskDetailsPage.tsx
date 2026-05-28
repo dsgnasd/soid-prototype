@@ -9,6 +9,13 @@ import { useDecideTask, useProcessDetails, useTaskDetails } from './api'
 import { formatDateTime } from '@/shared/lib/format'
 import { routes } from '@/shared/config/routes'
 import { ApiError } from '@/shared/api/client'
+import { toast } from '@/shared/ui/toast'
+
+const DECISION_TOAST: Record<'approve' | 'reject' | 'return', string> = {
+  approve: 'Задача согласована',
+  reject: 'Задача отклонена',
+  return: 'Задача отправлена на доработку',
+}
 
 type Decision = 'approve' | 'reject' | 'return' | null
 
@@ -49,6 +56,7 @@ export function TaskDetailsPage() {
     if (!decision || !id) return
     try {
       await decideTask.mutateAsync({ id, decision, comment: comment || undefined })
+      toast.success(DECISION_TOAST[decision])
       navigate(routes.tasks)
     } catch {
       // Ошибка отобразится из mutation.error

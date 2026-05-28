@@ -8,6 +8,7 @@ import { Button } from '@/shared/ui/button'
 import { Select } from '@/shared/ui/select'
 import { FormField, TextInput, TextArea } from '@/shared/ui/form-field'
 import { apiFetch, ApiError } from '@/shared/api/client'
+import { toast } from '@/shared/ui/toast'
 import { routes } from '@/shared/config/routes'
 import type { Escalation } from '@/shared/types'
 
@@ -50,7 +51,10 @@ export function NewEscalationPage() {
         method: 'POST',
         body: { type, urgency, description, objectRef: objectRef || undefined },
       }),
-    onSuccess: () => navigate(routes.adminEscalations),
+    onSuccess: () => {
+      toast.success('Заявка отправлена', 'Суперадминистратор рассмотрит её и уведомит вас о решении')
+      navigate(routes.adminEscalations)
+    },
     onError: (err: Error) => {
       setError(err instanceof ApiError ? err.message : 'Ошибка отправки заявки')
     },

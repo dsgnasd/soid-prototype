@@ -13,6 +13,7 @@ import { routes } from '@/shared/config/routes'
 import { cn } from '@/shared/lib/utils'
 import { ApiError } from '@/shared/api/client'
 import { useCurrentRole } from '@/shared/hooks/useAuth'
+import { toast } from '@/shared/ui/toast'
 import type { Escalation } from '@/shared/types'
 
 const URGENCY_VARIANT = {
@@ -163,9 +164,11 @@ function EscalationDetails({
       }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['escalations'] })
+      toast.success(decision === 'approve' ? 'Заявка одобрена' : 'Заявка отклонена')
       setDecision(null)
       setReason('')
     },
+    onError: (err: Error) => toast.error('Не удалось обработать заявку', err.message),
   })
 
   const isResolved = escalation.status === 'approved' || escalation.status === 'rejected'
