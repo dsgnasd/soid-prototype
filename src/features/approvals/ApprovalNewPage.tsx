@@ -7,6 +7,7 @@ import { Button } from '@/shared/ui/button'
 import { useApprovalTemplates, useStartProcess } from './api'
 import { routes } from '@/shared/config/routes'
 import { cn } from '@/shared/lib/utils'
+import { DatePicker } from '@/shared/ui/date-picker'
 
 const STEPS = [
   { id: 1, label: 'Шаблон' },
@@ -190,12 +191,15 @@ export function ApprovalNewPage() {
             </FormField>
 
             <FormField label="Срок завершения">
-              <input
-                type="date"
+              <DatePicker
                 value={deadline}
-                onChange={(e) => setDeadline(e.target.value)}
-                className="h-11 px-4 rounded-md border border-border-default bg-bg-subtle focus:bg-bg-surface focus:border-accent text-sm"
+                onChange={setDeadline}
+                minDate={new Date()}
+                ariaLabel="Срок завершения"
               />
+              <p className="text-xs text-text-muted mt-1.5">
+                Дата, к которой процесс должен быть согласован
+              </p>
             </FormField>
 
             <div className="rounded-md bg-bg-subtle border border-border-subtle p-3 text-xs text-text-muted">
